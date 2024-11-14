@@ -1,11 +1,27 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 const MenuEmployee : React.FC = () => {
+
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/login');
+    }
+
+
+
     return (
         <nav>
             <ul>
                 <li>
-                    <Link to="/">Produits</Link>
+                    <Link to="/employeeHome">Produits</Link>
+                </li>
+                <li>
+                    <Link to="/categoryList">Categories</Link>
+                </li>
+                <li>
+                    <button onClick={handleLogout}>Se déconnecter</button>
                 </li>
             </ul>
         </nav>

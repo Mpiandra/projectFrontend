@@ -3,14 +3,14 @@ import Input from "../../Components/Common/Input.tsx";
 import {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../axiosInstance.ts";
 import {useNavigate} from "react-router-dom";
+import {Button, Stack} from "@mui/material";
 
 const Login: React.FC = () => {
     const[mailEmployee, setMailEmployee] : [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
     const[password, setPassword] : [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
     const navigate = useNavigate();
 
-    const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         if(!mailEmployee || !password){
             console.log("Veuillez remplir tous les champs");
         } else {
@@ -18,6 +18,7 @@ const Login: React.FC = () => {
                 const response = await axiosInstance.post("/auth/login", {mailEmployee, password});
                 console.log(response.data);
                 localStorage.setItem("token", response.data);
+                navigate('/employeeHome')
             }catch (error){
                 console.error(error);
             }
@@ -25,36 +26,53 @@ const Login: React.FC = () => {
     }
 
 
-    return <div>
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="mailEmployee">Mail :</label>
-                <Input type="email"
-                       name="emailEmployee"
-                       id = "mailEmployee"
-                       value={mailEmployee ?? ""}
-                       onChange={setMailEmployee}
-                       required
+    return (
+        <Stack
+            direction="column"
+            spacing={2}
+            sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                border : "1px solid gray",
+                borderRadius : 1,
+                width : 300,
+                height : 200,
 
-                />
-            </div>
-            <div>
-                <label htmlFor="password">Mot de passe :</label>
-                <Input type="password"
-                       name="password"
-                       id = "password"
-                       value={password ?? ""}
-                       onChange={setPassword}
-                       required
-                />
-            </div>
-            <div>
-                <button type="submit">Se connecter</button>
-                <button type="button" onClick={() => navigate("/")}>Annuler</button>
-            </div>
+            }}
+        >
+                <div>
+                    <Input type="email"
+                           name="emailEmployee"
+                           label="Mail"
+                           id="outlined-basic"
+                           value={mailEmployee ?? ""}
+                           onChange={setMailEmployee}
+                           required
 
-        </form>
-    </div>
+                    />
+                </div>
+                <div>
+                    <Input type="password"
+                           name="password"
+                           label="Password"
+                           id="outlined-password-input"
+                           value={password ?? ""}
+                           onChange={setPassword}
+                           required
+                    />
+                </div>
+            <Stack
+                direction="row"
+                spacing={2}
+            >
+                <Button variant="outlined" size="small" onClick={handleSubmit}>Se connecter</Button>
+                <Button variant="outlined" size="small" onClick={() => navigate("/")}>Annuler</Button>
+            </Stack>
+
+
+        </Stack>
+
+    )
 }
 
 export default Login

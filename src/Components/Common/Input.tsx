@@ -1,30 +1,39 @@
 import * as React from "react";
+import {TextField} from "@mui/material";
 
 interface InputProps {
     type : string;
     placeholder ?: string;
-    id ?: string;
     name : string;
-    value : string;
+    value ?: string;
     required ?: boolean;
-    onChange : (event: string) => void;
-    pattern ?: string;
+    onChange ?: (event: string) => void;
     title ?: string;
+    label ?: string;
+    id?: string;
+    helperText ?: string;
+    defaultValue ?: string;
 }
 
-const Input : React.FC<InputProps> = ({type,name, id, placeholder, value, required, onChange, pattern, title}) => {
+const Input : React.FC<InputProps> = ({defaultValue, type,name,id, helperText, placeholder, label, value, required, onChange, title}) => {
     return <>
-        <input
+        <TextField
             name={name}
+
             type={type}
-            id={id}
             placeholder={placeholder}
             value={value}
             required={required}
-            pattern={pattern}
             title={title}
+            id={id}
+            label={label}
+            helperText={helperText}
+            variant="outlined"
+            defaultValue={defaultValue}
             onChange={(e) => {
-                onChange(e.target.value);
+                if(onChange){
+                    onChange(e.target.value);
+                }
             }}
         />
     </>

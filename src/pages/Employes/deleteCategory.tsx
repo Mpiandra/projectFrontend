@@ -1,19 +1,42 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import axiosInstance from "../../axiosInstance.ts";
+
+type Category = {
+    idCategory: number;
+    categoryName: string;
+    productTypes: ProductType[];
+};
+type Attribute = {
+    attributeId: number;
+    attributeName: string;
+    attributeType: string;
+};
+
+type ProductType = {
+    idProductType: number;
+    productTypeName: string;
+    attributes: Attribute[];
+};
 
 interface DeleteCategoryProps {
     idCategory : number | undefined;
     open : boolean;
     handleClose : () => void;
     categoryName : string | undefined;
+    setCategoryDataList : Dispatch<SetStateAction<Category[]>> ;
+    categoryDataList: Category[];
 }
-const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, categoryName, handleClose}) => {
+const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, categoryName, handleClose, setCategoryDataList, categoryDataList}) => {
 
     const handleSubmit = async () => {
         try {
-            const response = axiosInstance.delete(`/category/${idCategory}`);
-            console.log(response)
+            axiosInstance.delete(`/category/${idCategory}`);
+            const filteredCategory = categoryDataList.filter((item) => {
+                return item.idCategory !== idCategory;
+            })
+            setCategoryDataList(filteredCategory);
+            
             handleClose();
         } catch (error){
             console.log('error ' + error );
@@ -35,8 +58,8 @@ const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, 
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button variant={"outlined"} onClick={handleSubmit}>Valider</Button>
-                <Button variant={"outlined"} onClick={handleClose}>Annuler</Button>
+                <Button variant={"outlined"} size={"small"} onClick={handleSubmit}>Valider</Button>
+                <Button variant={"outlined"} size={"small"} onClick={handleClose}>Annuler</Button>
             </DialogActions>
         </Dialog>
     )

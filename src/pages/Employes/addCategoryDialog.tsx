@@ -3,17 +3,40 @@ import React, {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../axiosInstance.ts";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 
+
+type Attribute = {
+    attributeId: number;
+    attributeName: string;
+    attributeType: string;
+};
+
+type ProductType = {
+    idProductType: number;
+    productTypeName: string;
+    attributes: Attribute[];
+};
+
+type Category = {
+    idCategory: number;
+    categoryName: string;
+    productTypes: ProductType[];
+};
+
 interface AddCategoryDialogProps {
     open : boolean;
     handleClose: () => void;
+    setCategoryDataList: Dispatch<SetStateAction<Category[]>> ;
+    categoryDataList: Category[];
 }
 
-const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({open, handleClose}) => {
+const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({open, handleClose, setCategoryDataList, categoryDataList}) => {
     const [categoryName, setCategoryName]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState()
 
     const handleSubmit = async () => {
         const newCategory = await axiosInstance.post('/category', {categoryName});
-        console.log(newCategory);
+        console.log("test",[...categoryDataList, {...newCategory.data, productTypes: []}])
+        setCategoryDataList([...categoryDataList, {...newCategory.data, productTypes: []}]) 
+        handleClose();
     }
 
     return (

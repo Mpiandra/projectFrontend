@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../axiosInstance.ts";
 import {Button, ButtonGroup, Stack} from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import MenuEmployee from "../../Components/Employes/menuEmployee.tsx";
 import {AddSharp, DeleteSharp, EditSharp} from "@mui/icons-material";
 import EditCategoryDialog from "./editCategory.tsx";
 import DeleteCategoryDialog from "./deleteCategory.tsx";
 import AddCategoryDialog from "./addCategoryDialog.tsx";
+import AddProductTypeandAttributes from "./addProductTypeandAttributes.tsx";
 
 // Types
 type Attribute = {
@@ -28,11 +28,11 @@ type Category = {
 };
 
 const CategoryList: React.FC = () => {
-    const navigate = useNavigate();
 
     const [openEditCategoryDialog, setOpenEditCategoryDialog] = useState(false)
     const [openDeleteCategoryDialog, setOpenDeleteCategoryDialog] = useState(false)
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
+    const [openAddProductTypeDialog, setOpenAddProductTypeDialog] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
 
@@ -62,6 +62,14 @@ const CategoryList: React.FC = () => {
         setOpenAddCategoryDialog(false)
     }
 
+    const handleOpenAddProductType = (category: Category) => {
+        setSelectedCategory(category);
+        setOpenAddProductTypeDialog(true);
+    }
+
+    const handleCloseAddProductType = () => {
+        setOpenAddProductTypeDialog(false);
+    }
     // Initialiser l'état avec un tableau vide de type Category[]
     const [categoryDataList, setCategoryDataList] = useState<Category[]>([]);
 
@@ -73,7 +81,7 @@ const CategoryList: React.FC = () => {
                 const data = response.data;
 
                 // Groupement des données
-                const groupedData: Category[] = data.reduce((acc: Category[], item) => {
+                const groupedData: Category[] = data.reduce((acc: Category[], item: any) => {
                     // Cherche ou crée une catégorie
                     let category = acc.find(c => c.idCategory === item.idCategory);
                     if (!category) {
@@ -130,14 +138,27 @@ const CategoryList: React.FC = () => {
             <EditCategoryDialog open={openEditCategoryDialog}
                                 handleClose={handleCloseCategoryEdit}
                                 idCategory={selectedCategory?.idCategory}
-                                oldCategoryName={selectedCategory?.categoryName} />
+                                oldCategoryName={selectedCategory?.categoryName}
+                                setCategoryDataList={setCategoryDataList}
+                                categoryDataList={categoryDataList} />
 
             <DeleteCategoryDialog open={openDeleteCategoryDialog}
+            categoryDataList={categoryDataList}
+            setCategoryDataList={setCategoryDataList}
                                   handleClose={handleCloseCategoryDelete}
                                   idCategory={selectedCategory?.idCategory}
                                   categoryName={selectedCategory?.categoryName} />
             <AddCategoryDialog open={openAddCategoryDialog}
+                                categoryDataList={categoryDataList}
+                                setCategoryDataList={setCategoryDataList}
                                handleClose={handleCloseAddCategory}
+            />
+            <AddProductTypeandAttributes open={openAddProductTypeDialog}
+                                         handleClose={handleCloseAddProductType}
+                                         idCategory={selectedCategory?.idCategory}
+                                         categoryName={selectedCategory?.categoryName}
+                                         categoryDataList={categoryDataList}
+                                         setCategoryDataList={setCategoryDataList}
             />
 
             {categoryDataList.map((category, index) => {
@@ -152,7 +173,7 @@ const CategoryList: React.FC = () => {
                                 <Button startIcon={<EditSharp />} size={"small"} onClick={() => handleOpenCategoryEdit(category)}>Modifier</Button>
                                 <Button startIcon={<DeleteSharp />} size={"small"} onClick={() => handleOpenCategoryDelete(category)}>Supprimer</Button>
                             </ButtonGroup>
-                            <Button variant={"outlined"} size={"small"} startIcon={<AddSharp />} onClick={() => navigate(`${category.idCategory}/${category.categoryName}/addProductTypeAndAttribute`)}>Type</Button>
+                            <Button variant={"outlined"} size={"small"} startIcon={<AddSharp />} onClick={() => handleOpenAddProductType(category)}>Type</Button>
                         </Stack>
                         {category.productTypes.map((productType, index) => {
                             return(

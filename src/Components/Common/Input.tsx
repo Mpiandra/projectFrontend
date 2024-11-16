@@ -2,9 +2,10 @@ import * as React from "react";
 import {TextField} from "@mui/material";
 
 interface InputProps {
+    index?: number;
     type : string;
     placeholder ?: string;
-    name : string;
+    name ?: string;
     value ?: string;
     required ?: boolean;
     onChange ?: (event: string) => void;
@@ -15,11 +16,10 @@ interface InputProps {
     defaultValue ?: string;
 }
 
-const Input : React.FC<InputProps> = ({defaultValue, type,name,id, helperText, placeholder, label, value, required, onChange, title}) => {
+const InputField : React.FC<InputProps> = ({defaultValue, type, name = "",id, helperText, placeholder, label, value, required, onChange, title}) => {
     return <>
         <TextField
             name={name}
-
             type={type}
             placeholder={placeholder}
             value={value}
@@ -39,4 +39,4 @@ const Input : React.FC<InputProps> = ({defaultValue, type,name,id, helperText, p
     </>
 }
 
-export default Input
+export default InputField

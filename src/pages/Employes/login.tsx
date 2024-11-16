@@ -1,5 +1,5 @@
 import * as React from "react";
-import Input from "../../Components/Common/Input.tsx";
+import InputField from "../../Components/Common/Input.tsx";
 import {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../axiosInstance.ts";
 import {useNavigate} from "react-router-dom";
@@ -41,7 +41,7 @@ const Login: React.FC = () => {
             }}
         >
                 <div>
-                    <Input type="email"
+                    <InputField type="email"
                            name="emailEmployee"
                            label="Mail"
                            id="outlined-basic"
@@ -52,7 +52,7 @@ const Login: React.FC = () => {
                     />
                 </div>
                 <div>
-                    <Input type="password"
+                    <InputField type="password"
                            name="password"
                            label="Password"
                            id="outlined-password-input"

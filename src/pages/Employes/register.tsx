@@ -1,5 +1,5 @@
 import * as React from "react";
-import Input from "../../Components/Common/Input.tsx";
+import InputField from "../../Components/Common/Input.tsx";
 import {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../axiosInstance.ts";
 import {useNavigate} from "react-router-dom";
@@ -33,7 +33,7 @@ const Register: React.FC = () => {
         <form onSubmit={handleSubmit}>
             <div>
                 <label htmlFor="nameEmployee">Nom :</label>
-                <Input type="text"
+                <InputField type="text"
                        id="nameEmployee"
                        name="nomEmployee"
                        value={nameEmployee ?? ""}
@@ -45,7 +45,7 @@ const Register: React.FC = () => {
 
             <div>
                 <label htmlFor="mailEmployee">Mail :</label>
-                <Input
+                <InputField
                     type="email"
                     name="mailEmployee"
                     id="mailEmployee"
@@ -59,7 +59,7 @@ const Register: React.FC = () => {
 
             <div>
                 <label htmlFor="password">Mot de passe :</label>
-                <Input
+                <InputField
                     type="password"
                     id="password"
                     name="password"

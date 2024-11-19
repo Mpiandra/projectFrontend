@@ -7,10 +7,12 @@ import { AllProductData, CategoryJoinProductType, ProductJoinProductAttribute } 
 import axiosInstance from "../../../axiosInstance.ts";
 import { groupData, transformToAllProductData } from "../../../Hooks/useGroupData.ts";
 import EditProductDialog from "./editProduct.tsx";
+import DeleteProductDialog from "./deleteProductDialog.tsx";
 
 const ProductsList: React.FC = () => {
     const [openAddProductDialog, setOpenAddProductDialog] = useState(false);
     const [openEditProductDialog, setOpenEditProductDialog] = useState(false);
+    const [openDeleteProductDialog, setOpenDeleteProductDialog] = useState(false);
 
     const [selectedProduct, setSelectedProduct] = useState<ProductJoinProductAttribute>();
 
@@ -65,6 +67,15 @@ const ProductsList: React.FC = () => {
         setOpenEditProductDialog(false);
     }
 
+    const handleOpenDeleteProduct = (product: ProductJoinProductAttribute) => {
+        setSelectedProduct(product);
+        setOpenDeleteProductDialog(true);
+    }
+
+    const handleCloseDeleteProduct = () => {
+        setOpenDeleteProductDialog(false);
+    }
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
     
@@ -85,6 +96,11 @@ const ProductsList: React.FC = () => {
                                 productDataList={productDataList}
                                 setProductDataList={setProductDataList}
             />
+            <DeleteProductDialog open={openDeleteProductDialog}
+                                    handleClose={handleCloseDeleteProduct}
+                                    selectedProduct={selectedProduct} 
+                                    productDataList={productDataList}
+                                    setProductDataList={setProductDataList}/>
 
             <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handleOpenAddProduct}>Produit</Button>
 
@@ -119,7 +135,7 @@ const ProductsList: React.FC = () => {
                                                         </CardContent>
                                                         <CardActions>
                                                             <IconButton onClick={() => handleOpenEditProduct(product)}><EditSharp /></IconButton>
-                                                            <IconButton><DeleteSharp /></IconButton>
+                                                            <IconButton onClick={() => handleOpenDeleteProduct(product)}><DeleteSharp /></IconButton>
                                                         </CardActions>
                                                 </Card>
                                             )

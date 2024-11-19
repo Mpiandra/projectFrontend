@@ -1,4 +1,4 @@
-import { Category, ResultProductType } from "./types";
+import { AllDataProps, AllProductData, CategoryJoinProductType, ProductTypeJoinCategory } from "./types";
 
 interface GroupDataProps {
     data : {
@@ -12,11 +12,10 @@ interface GroupDataProps {
     }[]
 }
 
-
 export function groupData ({data} : GroupDataProps) {
     
     // Groupement des données
-    const groupedData: Category[] = data.reduce((acc: Category[], item: any) => {
+    const groupedData: CategoryJoinProductType[] = data.reduce((acc: CategoryJoinProductType[], item: any) => {
         // Cherche ou crée une catégorie
         let category = acc.find(c => c.idCategory === item.idCategory);
         if (!category) {
@@ -60,8 +59,8 @@ export function groupData ({data} : GroupDataProps) {
 }
 
 
-export function transformCategoryArray(categories: Category[]): ResultProductType[] {
-    const result : ResultProductType[] = [];
+export function transformCategoryArray(categories: CategoryJoinProductType[]): ProductTypeJoinCategory[] {
+    const result : ProductTypeJoinCategory[] = [];
 
     categories.forEach(category => {
         category.productTypes.forEach(productType => {
@@ -78,4 +77,52 @@ export function transformCategoryArray(categories: Category[]): ResultProductTyp
         })
     })
     return result;
+}
+
+export function transformToAllProductData(data: AllDataProps[]): AllProductData[] {
+    const categoryMap = new Map<number, AllProductData>();
+
+    data.forEach((item) => {
+        let category = categoryMap.get(item.idCategory);
+        if (!category) {
+            category = {
+                idCategory: item.idCategory,
+                categoryName: item.categoryName,
+                productTypes: [],
+            };
+            categoryMap.set(item.idCategory, category);
+        }
+
+        let productType = category.productTypes.find(pt => pt.idProductType === item.idProductType);
+        if (!productType) {
+            productType = {
+                idProductType: item.idProductType,
+                productTypeName: item.productTypeName,
+                products: [],
+            };
+            category.productTypes.push(productType);
+        }
+
+        let product = productType.products.find(p => p.idProduct === item.idProduct);
+        if (!product) {
+            product = {
+                idProduct: item.idProduct,
+                productName: item.productName,
+                price: item.price,
+                imageUrl: item.imageUrl,
+                attributes: [],
+            };
+            productType.products.push(product);
+        }
+
+        if (item.idAttribute) {
+            product.attributes.push({
+                idAttribute: item.idAttribute,
+                attributeName: item.attributeName,
+                attributeValue: item.attributeValue,
+            });
+        }
+    });
+
+    return Array.from(categoryMap.values());
 }

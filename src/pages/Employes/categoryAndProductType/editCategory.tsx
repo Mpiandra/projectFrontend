@@ -3,7 +3,7 @@ import { Button, Dialog, DialogTitle, Stack } from "@mui/material";
 import InputField from "../../../Components/Common/Input.tsx";
 import { CancelSharp, SendSharp } from "@mui/icons-material";
 import axiosInstance from "../../../axiosInstance.ts";
-import { Category } from "../../../Hooks/types.ts";
+import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 
 
 interface EditCategoryDialogProps {
@@ -11,8 +11,8 @@ interface EditCategoryDialogProps {
     handleClose: () => void;
     idCategory: number | undefined;
     oldCategoryName: string | undefined;
-    setCategoryDataList: Dispatch<SetStateAction<Category[]>>;
-    categoryDataList: Category[];
+    setCategoryDataList: Dispatch<SetStateAction<CategoryJoinProductType[]>>;
+    categoryDataList: CategoryJoinProductType[];
 }
 
 const EditCategoryDialog: React.FC<EditCategoryDialogProps> = ({ open, handleClose, idCategory, oldCategoryName, setCategoryDataList, categoryDataList }) => {

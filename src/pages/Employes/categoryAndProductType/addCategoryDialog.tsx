@@ -2,14 +2,14 @@ import InputField from "../../../Components/Common/Input.tsx";
 import React, {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../../axiosInstance.ts";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
-import { Category } from "../../../Hooks/types.ts";
+import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 
 
 interface AddCategoryDialogProps {
     open : boolean;
     handleClose: () => void;
-    setCategoryDataList: Dispatch<SetStateAction<Category[]>> ;
-    categoryDataList: Category[];
+    setCategoryDataList: Dispatch<SetStateAction<CategoryJoinProductType[]>> ;
+    categoryDataList: CategoryJoinProductType[];
 }
 
 const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({open, handleClose, setCategoryDataList, categoryDataList}) => {

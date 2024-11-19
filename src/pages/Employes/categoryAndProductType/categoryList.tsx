@@ -7,7 +7,7 @@ import EditCategoryDialog from "./editCategory.tsx";
 import DeleteCategoryDialog from "./deleteCategory.tsx";
 import AddCategoryDialog from "./addCategoryDialog.tsx";
 import AddProductTypeandAttributes from "./addProductTypeandAttributes.tsx";
-import { Category } from "../../../Hooks/types.ts";
+import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 import { groupData} from "../../../Hooks/useGroupData.ts";
 
 // Types
@@ -19,13 +19,13 @@ const CategoryList: React.FC = () => {
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [openAddProductTypeDialog, setOpenAddProductTypeDialog] = useState(false);
 
-    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
+    const [selectedCategory, setSelectedCategory] = useState<CategoryJoinProductType | null>(null)
 
     const handleCloseCategoryEdit= () => {
         setOpenEditCategoryDialog(false);
     }
 
-    const handleOpenCategoryEdit = (category : Category) => {
+    const handleOpenCategoryEdit = (category : CategoryJoinProductType) => {
         setSelectedCategory(category);
         setOpenEditCategoryDialog(true);
     }
@@ -34,7 +34,7 @@ const CategoryList: React.FC = () => {
         setOpenDeleteCategoryDialog(false);
     }
     
-    const handleOpenCategoryDelete = (category : Category) => {
+    const handleOpenCategoryDelete = (category : CategoryJoinProductType) => {
         setSelectedCategory(category);
         setOpenDeleteCategoryDialog(true);
     }
@@ -47,7 +47,7 @@ const CategoryList: React.FC = () => {
         setOpenAddCategoryDialog(false)
     }
 
-    const handleOpenAddProductType = (category: Category) => {
+    const handleOpenAddProductType = (category: CategoryJoinProductType) => {
         setSelectedCategory(category);
         setOpenAddProductTypeDialog(true);
     }
@@ -56,7 +56,7 @@ const CategoryList: React.FC = () => {
         setOpenAddProductTypeDialog(false);
     }
 
-    const [categoryDataList, setCategoryDataList] = useState<Category[]>([]);
+    const [categoryDataList, setCategoryDataList] = useState<CategoryJoinProductType[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {

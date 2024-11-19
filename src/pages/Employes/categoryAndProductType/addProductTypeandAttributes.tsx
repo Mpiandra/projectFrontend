@@ -3,15 +3,15 @@ import {Button, Dialog, DialogActions, DialogTitle, Stack} from "@mui/material";
 import InputField from "../../../Components/Common/Input.tsx";
 import axiosInstance from "../../../axiosInstance.ts";
 import SelectList from "../../../Components/Common/select.tsx";
-import { Category } from "../../../Hooks/types.ts";
+import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 
 interface AddProductTypeAndAttributesProps {
     open: boolean;
     handleClose: () => void;
     idCategory: number | undefined;
     categoryName: string | undefined;
-    setCategoryDataList: Dispatch<SetStateAction<Category[]>>;
-    categoryDataList: Category[];
+    setCategoryDataList: Dispatch<SetStateAction<CategoryJoinProductType[]>>;
+    categoryDataList: CategoryJoinProductType[];
 }
 
 const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> = ({open, handleClose, idCategory, categoryName, setCategoryDataList, categoryDataList}) => {

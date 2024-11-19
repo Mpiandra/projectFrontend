@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import axiosInstance from "../../../axiosInstance.ts";
-import { Category } from "../../../Hooks/types.ts";
+import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 
 
 interface DeleteCategoryProps {
@@ -9,8 +9,8 @@ interface DeleteCategoryProps {
     open : boolean;
     handleClose : () => void;
     categoryName : string | undefined;
-    setCategoryDataList : Dispatch<SetStateAction<Category[]>> ;
-    categoryDataList: Category[];
+    setCategoryDataList : Dispatch<SetStateAction<CategoryJoinProductType[]>> ;
+    categoryDataList: CategoryJoinProductType[];
 }
 const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, categoryName, handleClose, setCategoryDataList, categoryDataList}) => {
 

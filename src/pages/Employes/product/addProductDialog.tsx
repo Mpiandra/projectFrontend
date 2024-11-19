@@ -1,32 +1,35 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,  InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Stack, TextField } from "@mui/material";
-import { Category, Product, ProductAttribute, ProductType } from "../../../Hooks/types";
-import React, { useState } from "react";
+import { CategoryJoinProductType, ProductJoinProductType, ProductAttributeJoinProduct, ProductTypeJoinProductTypeAttribute, AllProductData, ProductTypeAttribute } from "../../../Hooks/types";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import InputField from "../../../Components/Common/Input";
 import axiosInstance from "../../../axiosInstance";
-import { transformCategoryArray } from "../../../Hooks/useGroupData";
+import { transformCategoryArray, transformToAllProductData } from "../../../Hooks/useGroupData";
 
 interface AddProductProps {
     open: boolean;
-    categoryDataList: Category[];
+    categoryDataList: CategoryJoinProductType[];
     handleClose: () => void;
+    productDataList: AllProductData[];
+    setProductDataList: Dispatch<SetStateAction<AllProductData[]>>
 }
 
-const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, handleClose }) => {
-    const [selectedProductType, setSelectedProductType] = useState<ProductType | null>(null)
+const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, handleClose, productDataList, setProductDataList }) => {
+    const [selectedProductType, setSelectedProductType] = useState<ProductTypeJoinProductTypeAttribute | null>(null)
     const [selectedProductTypeId, setSelectedProductTypeId] = useState<number | "">("");
 
     const [productName, setProductName] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [imageFile, setImageFile] = useState<File | null>(null);
 
-    const [productAttributes, setProductAttributes] = useState<ProductAttribute[]>([]);
+
+    const [productAttributes, setProductAttributes] = useState<ProductAttributeJoinProduct[]>([]);
 
 
     const handleChange = (event: SelectChangeEvent<number>) => {
         const value = event.target.value as number;
         setSelectedProductTypeId(value);
         const newObj = categoryDataList
-        .reduce((acc, category) => acc.concat(category.productTypes), [] as ProductType[])
+        .reduce((acc, category) => acc.concat(category.productTypes), [] as ProductTypeJoinProductTypeAttribute[])
         .find((productType) => productType.idProductType === value) || null;
         
         
@@ -55,7 +58,7 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
         
         console.log("pType : ", pType)
 
-        const newProduct: Product = {
+        const newProduct: ProductJoinProductType = {
             productName: productName,
             price: price,
             productType: pType[0]
@@ -69,26 +72,43 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                 formData.append("imageFile", imageFile)
             }
             
-            for (const pair of formData.entries()) {
-                if (pair[1] instanceof File) {
-                    console.log(`Clé : ${pair[0]}`);
-                    console.log(`Nom du fichier : ${pair[1].name}`);
-                    console.log(`Taille du fichier : ${pair[1].size} octets`);
-                    console.log(`Type MIME : ${pair[1].type}`);
-                } else {
-                    console.log(`Clé : ${pair[0]}, Valeur : ${pair[1]}`);
-                }
-            }
-            
-            
-    
-            const response = await axiosInstance.post("/product", formData);
+            const productResponse = await axiosInstance.post("/product", formData);
+            console.log("productResponse : ",productResponse);
     
             productAttributes.map((productAttribute) => {
-                productAttribute.product = response.data
+                productAttribute.product = productResponse.data
             })
             
-            await axiosInstance.post("/productAttributes", productAttributes)
+            const productAttributesResponse =  await axiosInstance.post("/productAttributes", productAttributes)
+            console.log("productAttributesResponse : ", productAttributesResponse)
+
+            console.log(productResponse.data.productType.category.idCategory);
+
+            
+            const list = [];
+
+            productAttributesResponse.data.map((attribute) => {
+                const pr = {
+                    idCategory: productResponse.data.productType.category.idCategory,
+                    categoryName: productResponse.data.productType.category.categoryName,
+                    idproductType: productResponse.data.productType.idProductType,
+                    productTypeName: productResponse.data.productType.productTypeName,
+                    idProduct: productResponse.data.idProduct,
+                    price: productResponse.data.price,
+                    productName: productResponse.data.productName,
+                    imageUrl: productResponse.data.imageUrl,
+                    idAttribute: attribute.idAttribute,
+                    attributeName: attribute.attributeName,
+                    attributeValue: attribute.attributeValue
+
+                }
+
+                list.push(pr);
+            })
+            
+            const newPr = transformToAllProductData(list);
+            
+            setProductDataList([...productDataList, ...newPr]);
     
         } catch(error){
             console.error(error);
@@ -99,10 +119,11 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
         
     }
 
-    const handleChangeInput = (index: number, attributeName: string, value: string) => {
+    const handleChangeInput = (index: number, attributeName: string, value: string, productTypeAttribute: ProductTypeAttribute) => {
         productAttributes[index] = {
             attributeName: attributeName,
-            attributeValue: value
+            attributeValue: value,
+            productTypeAttribute: productTypeAttribute
         };
         
         setProductAttributes(productAttributes);
@@ -118,7 +139,6 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
 
     return (
         <>
-        <h1>{selectedProductType?.productTypeName ?? ""}</h1>
         <Dialog open={open} maxWidth="lg" fullWidth onClose={handleClose}>
             <DialogTitle>Ajouter un produit</DialogTitle>
             <DialogContent>
@@ -148,7 +168,7 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                                     required
                         />
 
-                        <InputField type="text" 
+                        <InputField type="number" 
                                     name="productName"
                                     label="Prix"
                                     value={price} 
@@ -158,7 +178,7 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                             return (
                                 <InputField key={attribute.attributeId} 
                                 index={index}
-                                onChange={(value: string) => handleChangeInput(index, attribute.attributeName, value)}
+                                onChange={(value: string) => handleChangeInput(index, attribute.attributeName, value, attribute)}
                                             type={attribute.attributeType} 
                                             label={attribute.attributeName} 
                                 required/>

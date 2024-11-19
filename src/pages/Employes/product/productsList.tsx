@@ -82,6 +82,8 @@ const ProductsList: React.FC = () => {
                                 handleClose={handleCloseEditProdut}
                                 selectedProduct={selectedProduct}
                                 categoryDataList={categoryDataList}
+                                productDataList={productDataList}
+                                setProductDataList={setProductDataList}
             />
 
             <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handleOpenAddProduct}>Produit</Button>

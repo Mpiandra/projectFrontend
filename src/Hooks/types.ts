@@ -42,14 +42,13 @@ export type ProductJoinProductType = {
     productName: string;
     price: string;
     imageUrl ?: string;
-    productType: ProductTypeJoinCategory | null;
+    productType?: ProductTypeJoinCategory | null;
 }
 
 export type ProductAttributeJoinProduct = {
-    idAttribute?: number;
+    idAttribute: number;
     attributeName: string;
     attributeValue: string;
-    productTypeAttribute: ProductTypeAttribute;
     product?: ProductJoinProductType;
 }
 

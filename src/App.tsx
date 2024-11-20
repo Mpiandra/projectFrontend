@@ -5,6 +5,7 @@ import ProductList from "./pages/Customer/productList.tsx";
 import ProtectedRoute from "./protectedRoute.tsx";
 import ProductsList from "./pages/Employes/product/productsList.tsx";
 import CategoryList from "./pages/Employes/categoryAndProductType/categoryList.tsx";
+import PointOfSaleList from "./pages/Employes/pointOfSale/pointOfSaleList.tsx";
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
                 <Route path="/" element={<ProductList/>} />
                 <Route path="/employeeHome" element={<ProtectedRoute><ProductsList /></ProtectedRoute>} />
                 <Route path="/categoryList" element={<ProtectedRoute><CategoryList/></ProtectedRoute>} />
+                <Route path="/pointOfSale" element={<ProtectedRoute><PointOfSaleList /></ProtectedRoute>} />
             </Routes>
         </Router>
     </>

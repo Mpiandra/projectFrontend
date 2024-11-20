@@ -21,6 +21,9 @@ const MenuEmployee : React.FC = () => {
                     <Link to="/categoryList">Categories</Link>
                 </li>
                 <li>
+                    <Link to="/pointOfSale">Points de vente</Link>
+                </li>
+                <li>
                     <button onClick={handleLogout}>Se déconnecter</button>
                 </li>
             </ul>

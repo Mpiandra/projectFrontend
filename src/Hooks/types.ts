@@ -87,3 +87,9 @@ export type AllDataProps = {
     attributeValue: string;
     attributeType: string;
 }
+
+export type PointOfSale = {
+    idPointOfSale ?: number;
+    pointOfSaleName: string;
+    address: string;
+}

@@ -7,11 +7,13 @@ import { SnackbarProvider } from "notistack";
 import axiosInstance from "../../../axiosInstance";
 import { PointOfSale } from "../../../Hooks/types";
 import EditPosDialog from "./editPosDialog";
+import DeletePosDialog from "./deletePosDialog";
 
 const PointOfSaleList = () => {
 
     const [openAddPosDialog, setOpenAddPosDialog] = useState(false);
     const [openEditPosDialog, setOpenEditPosDialog] = useState(false);
+    const [openDeletePosDialog, setOpenDeletePosDialog] = useState(false);
 
     const [selectedPos, setSelectedPos] = useState<PointOfSale>();
 
@@ -55,6 +57,15 @@ const PointOfSaleList = () => {
         setOpenEditPosDialog(false);
     }
 
+    const handleOpenDeletePosDialog = (pos: PointOfSale) => {
+        setSelectedPos(pos)
+        setOpenDeletePosDialog(true);
+    }
+
+    const handleCloseDeletePosDialog = () => {
+        setOpenDeletePosDialog(false);
+    }
+
     if(loading) return <CircularProgress color="inherit" />
     if(error) return <p>{error}</p>
 
@@ -76,6 +87,12 @@ const PointOfSaleList = () => {
                                 handleClose={handleCloseEditPosDialog} 
                                 selectedPos={selectedPos}
                                 pointOfSaleList={pointOfSaleList}/>
+                
+                <DeletePosDialog open={openDeletePosDialog}
+                                 handleClose={handleCloseDeletePosDialog}
+                                 selectedPos={selectedPos}
+                                 pointOfSaleList={pointOfSaleList}
+                                 setPointOfSaleList={setPointOfSaleList} />
 
                 <TableContainer component={Paper}>
                     <Table>
@@ -95,7 +112,7 @@ const PointOfSaleList = () => {
                                         <TableCell align="center">
                                             <ButtonGroup variant="text">
                                                 <IconButton onClick={() => handleOpenEditPosDialog(pos)}><EditSharp/></IconButton>
-                                                <IconButton><DeleteSharp/></IconButton>
+                                                <IconButton onClick={() => handleOpenDeletePosDialog(pos)}><DeleteSharp/></IconButton>
                                             </ButtonGroup>
                                         </TableCell>
                                     </TableRow>

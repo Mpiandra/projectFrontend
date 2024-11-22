@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import axiosInstance from "../../../axiosInstance.ts";
 import { CategoryJoinProductType } from "../../../Hooks/types.ts";
+import { useSnackbar } from "notistack";
 
 
 interface DeleteCategoryProps {
@@ -14,6 +15,8 @@ interface DeleteCategoryProps {
 }
 const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, categoryName, handleClose, setCategoryDataList, categoryDataList}) => {
 
+    const {enqueueSnackbar} = useSnackbar();
+
     const handleSubmit = async () => {
         try {
             axiosInstance.delete(`/category/${idCategory}`);
@@ -21,10 +24,10 @@ const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, 
                 return item.idCategory !== idCategory;
             })
             setCategoryDataList(filteredCategory);
-            
+            enqueueSnackbar("La catégorie a été supprimée avec succès", {variant: "success"})
             handleClose();
         } catch (error){
-            console.log('error ' + error );
+            enqueueSnackbar(`Echec de la suppressions de la catégorie : ${error}`, {variant: "error"});
         }
     }
 

@@ -8,6 +8,7 @@ import { SnackbarProvider } from "notistack";
 const EmployeeList: React.FC = () => {
 
     const [openAddEmployee, setOpenAddEmployee] = useState(false)
+    
 
     const handleOpenAddEmployee = () => {
         setOpenAddEmployee(true);

@@ -4,6 +4,8 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import InputField from "../../../Components/Common/Input";
 import axiosInstance from "../../../axiosInstance";
 import { transformCategoryArray } from "../../../Hooks/useGroupData";
+import { useSnackbar } from "notistack";
+import { AxiosResponse } from "axios";
 
 interface AddProductProps {
     open: boolean;
@@ -20,6 +22,8 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
     const [productName, setProductName] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [imageFile, setImageFile] = useState<File | null>(null);
+
+    const { enqueueSnackbar } = useSnackbar();
 
 
     const [productAttributes, setProductAttributes] = useState<ProductAttributeJoinProduct[]>([]);
@@ -46,76 +50,83 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
     ]);
 
     const handleAddProduct = async() => {
-        const list = transformCategoryArray(categoryDataList);
-
-        const pType = list.filter((productType) => {
-            if(productType.idProductType === selectedProductType?.idProductType){
-                return true;
-            }
-        })
-        
-        console.log("pType : ", pType)
-
-        const newProduct: ProductJoinProductType = {
-            productName: productName,
-            price: price,
-            productType: pType[0]
-        }
-
 
         try{
-            const formData = new FormData();
-            formData.append("product", JSON.stringify(newProduct));
-            if(imageFile){
-                formData.append("imageFile", imageFile)
-            }
-            
-            const productResponse = await axiosInstance.post("/product", formData);
-            console.log("productResponse : ",productResponse);
-    
-            productAttributes.map((productAttribute) => {
-                productAttribute.product = productResponse.data
-            })
-            
-            const productAttributesResponse =  await axiosInstance.post("/productAttributes", productAttributes)
-            console.log("productAttributesResponse : ", productAttributesResponse)
+            if(productName !== "" && price !== ""){
+                let productAttributesResponse: AxiosResponse<ProductAttribute[]> | null = null;
 
-            console.log(productResponse.data.productType.category.idCategory);
+                const list = transformCategoryArray(categoryDataList);
 
-            
-
-            const pr : ProductJoinProductAttribute = {
-
-                idProduct: productResponse.data.idProduct,
-                price: productResponse.data.price,
-                productName: productResponse.data.productName,
-                imageUrl: productResponse.data.imageUrl,
-                attributes: []
-            }
-
-            productAttributesResponse.data.map((attribute : ProductAttribute) => {
-                pr.attributes.push(attribute);
-            })
-
-            const pDataList = [...productDataList];
-            
-            pDataList.map((category) => {
-                category.productTypes.map((productType ) => {
-                    if(productType.idProductType === productResponse.data.productType.idProductType){
-                            productType.products.push(pr);
+                const pType = list.filter((productType) => {
+                    if(productType.idProductType === selectedProductType?.idProductType){
+                        return true;
                     }
                 })
                 
-            })
-            setProductDataList(pDataList);
+                console.log("pType : ", pType)
+
+                const newProduct: ProductJoinProductType = {
+                    productName: productName,
+                    price: price,
+                    productType: pType[0]
+                }
             
+                const formData = new FormData();
+                formData.append("product", JSON.stringify(newProduct));
+                if(imageFile){
+                    formData.append("imageFile", imageFile)
+                }
+                
+                const productResponse = await axiosInstance.post("/product", formData);
+                console.log("productResponse : ",productResponse);
+        
+                productAttributes.map((productAttribute) => {
+                    productAttribute.product = productResponse.data
+                })
+                
+                try{
+                    productAttributesResponse =  await axiosInstance.post("/productAttributes", productAttributes)
+                    console.log("productAttributesResponse : ", productAttributesResponse)
+                } catch(error){
+                    await axiosInstance.delete('/product', productResponse.data);
+                    enqueueSnackbar(`Echec de l'ajout du produit : ${error}`, {variant: "error"})
+                }
+                
+
+                const pr : ProductJoinProductAttribute = {
+
+                    idProduct: productResponse.data.idProduct,
+                    price: productResponse.data.price,
+                    productName: productResponse.data.productName,
+                    imageUrl: productResponse.data.imageUrl,
+                    attributes: []
+                }
+
+                productAttributesResponse?.data.map((attribute : ProductAttribute) => {
+                    pr.attributes.push(attribute);
+                })
+
+                //const pDataList = [...productDataList];
+                
+                productDataList.map((category) => {
+                    category.productTypes.map((productType ) => {
+                        if(productType.idProductType === productResponse.data.productType.idProductType){
+                                productType.products.push(pr);
+                        }
+                    })
+                    
+                })
+                //setProductDataList(pDataList);
+                enqueueSnackbar("Le produit a été ajouté avec succès", {variant: "success"});
+                handleClose();
     
+            } else {
+                enqueueSnackbar("Veuillez remplir tous les champs, s'il vous plait.", {variant: "warning"});
+            }
         } catch(error){
-            console.error(error);
+            enqueueSnackbar(`Echec de l'ajout du produit : ${error}`, {variant: "error"});
         }
 
-       
-        handleClose();
         
     }
 

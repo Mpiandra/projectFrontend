@@ -4,6 +4,7 @@ import InputField from "../../../Components/Common/Input.tsx";
 import { CancelSharp, SendSharp } from "@mui/icons-material";
 import axiosInstance from "../../../axiosInstance.ts";
 import { CategoryJoinProductType } from "../../../Hooks/types.ts";
+import { useSnackbar } from "notistack";
 
 
 interface EditCategoryDialogProps {
@@ -18,6 +19,7 @@ interface EditCategoryDialogProps {
 const EditCategoryDialog: React.FC<EditCategoryDialogProps> = ({ open, handleClose, idCategory, oldCategoryName, setCategoryDataList, categoryDataList }) => {
     const [categoryName, setCategoryName] = useState("");
 
+    const {enqueueSnackbar} = useSnackbar();
     // Initialiser newCategoryName avec categoryName à l'ouverture du dialogue
     useEffect(() => {
         if (open) {
@@ -38,9 +40,10 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = ({ open, handleClo
                 }
             })
             setCategoryDataList(filteredCategoryDataList);
+            enqueueSnackbar("La catégorie a été modifiée avec succès", {variant: "success"});
             handleClose();
         } catch (error) {
-            console.error("Erreur lors de la mise à jour de la catégorie:", error);
+            enqueueSnackbar(`Echec de la modification de la catégorie: ${error}`, {variant: "error"});
         }
     };
 

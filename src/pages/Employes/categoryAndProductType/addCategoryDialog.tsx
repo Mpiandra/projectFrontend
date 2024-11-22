@@ -3,6 +3,7 @@ import React, {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../../axiosInstance.ts";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import { CategoryJoinProductType } from "../../../Hooks/types.ts";
+import { useSnackbar } from "notistack";
 
 
 interface AddCategoryDialogProps {
@@ -13,13 +14,24 @@ interface AddCategoryDialogProps {
 }
 
 const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({open, handleClose, setCategoryDataList, categoryDataList}) => {
-    const [categoryName, setCategoryName]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState()
+    const [categoryName, setCategoryName]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleSubmit = async () => {
-        const newCategory = await axiosInstance.post('/category', {categoryName});
-        console.log("test",[...categoryDataList, {...newCategory.data, productTypes: []}])
-        setCategoryDataList([...categoryDataList, {...newCategory.data, productTypes: []}]) 
-        handleClose();
+        try{
+            if(categoryName){
+                const newCategory = await axiosInstance.post('/category', {categoryName});
+                console.log("test",[...categoryDataList, {...newCategory.data, productTypes: []}])
+                setCategoryDataList([...categoryDataList, {...newCategory.data, productTypes: []}]);
+                enqueueSnackbar("La catégorie a été ajoutée avec succès", {variant: "success"});
+                handleClose();
+            } else {
+                enqueueSnackbar("Veuillez remplir le champ, s'il vous plait", {variant: "warning"});
+            }
+        }catch(error){
+            enqueueSnackbar(`Echec de l'ajout de la catégorie: ${error}`, {variant: "error"})
+        }
     }
 
     return (

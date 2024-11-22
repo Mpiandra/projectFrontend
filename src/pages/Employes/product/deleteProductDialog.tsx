@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { AllProductData, ProductJoinProductAttribute } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import { Dispatch, SetStateAction } from "react";
+import { useSnackbar } from "notistack";
 
 interface DeleteProductDialogProps {
     open: boolean;
@@ -13,21 +14,23 @@ interface DeleteProductDialogProps {
 
 const DeleteProductDialog : React.FC<DeleteProductDialogProps> = ({open, handleClose, selectedProduct, productDataList}) => {
 
+    const { enqueueSnackbar } = useSnackbar();
+
     const handleDeleteProduct = async () => {
-        await axiosInstance.delete('/product',  {data : selectedProduct});
-        await axiosInstance.delete('/productAttributes', {data: selectedProduct?.attributes})
+        try {
+            await axiosInstance.delete('/product',  {data : selectedProduct});
+            await axiosInstance.delete('/productAttributes', {data: selectedProduct?.attributes})
 
-        productDataList.forEach(category => {
-            // For each category, iterate through its productTypes
-            category.productTypes.forEach(productType => {
-              // Filter out the product with the matching idProduct
-              productType.products = productType.products.filter(product => product.idProduct !== selectedProduct?.idProduct);
+            productDataList.forEach(category => {
+                category.productTypes.forEach(productType => {
+                productType.products = productType.products.filter(product => product.idProduct !== selectedProduct?.idProduct);
+                });
             });
-          });
-        
-
-        // setProductDataList(filteredProductDataList);
-        handleClose();
+            enqueueSnackbar("Le produit a été supprimé avec succès.", {variant: "success"});
+            handleClose();
+        } catch(error){
+            enqueueSnackbar(`Echec de la suppression du produit ${error}`, {variant: "error"})
+        }
 
     }
     return (

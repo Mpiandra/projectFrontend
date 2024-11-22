@@ -4,6 +4,7 @@ import InputField from "../../../Components/Common/Input.tsx";
 import axiosInstance from "../../../axiosInstance.ts";
 import SelectList from "../../../Components/Common/select.tsx";
 import { CategoryJoinProductType } from "../../../Hooks/types.ts";
+import { useSnackbar } from "notistack";
 
 interface AddProductTypeAndAttributesProps {
     open: boolean;
@@ -16,6 +17,8 @@ interface AddProductTypeAndAttributesProps {
 
 const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> = ({open, handleClose, idCategory, categoryName, setCategoryDataList, categoryDataList}) => {
     const [productTypeName, setProductTypeName] : [string | undefined, Dispatch<SetStateAction<string | undefined>>]= useState();
+
+    const { enqueueSnackbar } = useSnackbar()
 
     const types = [
         {"text" : "Texte", "value" : "text"},
@@ -59,32 +62,39 @@ const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> =
 
    const handleSubmit = async () => {
       try{
-          const newProductType = await axiosInstance.post('/productType', {productTypeName: productTypeName, category : {idCategory, categoryName }});
-          productTypeAttributes.map((attribute) => (
-              attribute.productType = newProductType.data
-          ));
-          console.log(productTypeAttributes)
-          const newProductTypeAttribute = await axiosInstance.post('/productTypeAttributes', productTypeAttributes);
-          console.log(newProductTypeAttribute);
-          handleClose();
+          if(productTypeName){
+                const newProductType = await axiosInstance.post('/productType', {productTypeName: productTypeName, category : {idCategory, categoryName }});
+                productTypeAttributes.map((attribute) => (
+                    attribute.productType = newProductType.data
+                ));
+                console.log(productTypeAttributes)
+                const newProductTypeAttribute = await axiosInstance.post('/productTypeAttributes', productTypeAttributes);
+                console.log(newProductTypeAttribute);
+                
 
-          const filteredCategoryDataList = categoryDataList.filter((item) => {
-            if(item.idCategory !== idCategory){
-                return true;
-            }else{
-                item.productTypes.push(newProductType.data)
-                item.productTypes.map((productType) => {
-                    if(productType.idProductType === newProductType.data.idProductType){
-                        productType.attributes=newProductTypeAttribute.data;
-                    }
-                })
-                return true;
-            }
-          })
-          setCategoryDataList(filteredCategoryDataList);
+                const filteredCategoryDataList = categoryDataList.filter((item) => {
+                    if(item.idCategory !== idCategory){
+                        return true;
+                    }else{
+                        item.productTypes.push(newProductType.data)
+                        item.productTypes.map((productType) => {
+                            if(productType.idProductType === newProductType.data.idProductType){
+                                productType.attributes=newProductTypeAttribute.data;
+                            }
+                        })
+                        return true;
+                }
+            })
+
+            setCategoryDataList(filteredCategoryDataList);
+            enqueueSnackbar("Le type de produit a été ajouté avec succès", {variant: "success"});
+            handleClose();
+          } else {
+            enqueueSnackbar("Veuillez remplir tous les champs, s'il vous plait", {variant: "warning"});
+          }
 
       } catch (error) {
-            console.error("error :" + error)
+            enqueueSnackbar(`Echec de l'ajout du type de produit : ${error}`, {variant: "error"})
       }
     }
     return (

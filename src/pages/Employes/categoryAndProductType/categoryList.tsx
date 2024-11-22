@@ -9,6 +9,7 @@ import AddCategoryDialog from "./addCategoryDialog.tsx";
 import AddProductTypeandAttributes from "./addProductTypeandAttributes.tsx";
 import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 import { groupData} from "../../../Hooks/useGroupData.ts";
+import { SnackbarProvider } from "notistack";
 
 // Types
 
@@ -77,7 +78,7 @@ const CategoryList: React.FC = () => {
     }, []);
 
     return (
-        <div>
+        <SnackbarProvider>
             <MenuEmployee />
             <Button variant="outlined" size="small" onClick={handleOpenAddCategory} startIcon={<AddSharp />}>Catégorie</Button>
             <EditCategoryDialog open={openEditCategoryDialog}
@@ -138,7 +139,7 @@ const CategoryList: React.FC = () => {
 
                 )
             })}
-        </div>
+        </SnackbarProvider>
     );
 };
 

@@ -8,6 +8,7 @@ import axiosInstance from "../../../axiosInstance.ts";
 import { groupData, transformToAllProductData } from "../../../Hooks/useGroupData.ts";
 import EditProductDialog from "./editProduct.tsx";
 import DeleteProductDialog from "./deleteProductDialog.tsx";
+import { SnackbarProvider } from "notistack";
 
 const ProductsList: React.FC = () => {
     const [openAddProductDialog, setOpenAddProductDialog] = useState(false);
@@ -81,7 +82,11 @@ const ProductsList: React.FC = () => {
     
 
     return (
-        <div>
+        <SnackbarProvider maxSnack={4}
+                            anchorOrigin={{
+                                vertical: "top",
+                                horizontal: "right"
+                            }}>
             <MenuEmployee />
             <AddProductDialog open={openAddProductDialog}
                               categoryDataList={categoryDataList}
@@ -147,7 +152,7 @@ const ProductsList: React.FC = () => {
                     })}
                 </div>
             ))}
-        </div>
+        </SnackbarProvider>
     );
 };
 

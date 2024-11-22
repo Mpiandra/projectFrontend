@@ -46,7 +46,7 @@ export type ProductJoinProductType = {
 }
 
 export type ProductAttributeJoinProduct = {
-    idAttribute: number;
+    idAttribute?: number;
     attributeName: string;
     attributeValue: string;
     product?: ProductJoinProductType;
@@ -92,4 +92,12 @@ export type PointOfSale = {
     idPointOfSale ?: number;
     pointOfSaleName: string;
     address: string;
+}
+
+export type Employee = {
+    idEmployee ?: number;
+    nameEmployee: string;
+    mailEmployee: string;
+    password?:string;
+    pointOfSale?:PointOfSale;
 }

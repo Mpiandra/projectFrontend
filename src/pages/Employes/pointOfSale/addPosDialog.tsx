@@ -3,13 +3,15 @@ import InputField from "../../../Components/Common/Input";
 import { useState } from "react";
 import axiosInstance from "../../../axiosInstance";
 import { useSnackbar } from "notistack";
+import { PointOfSale } from "../../../Hooks/types";
 
 interface AddPosDialogProps {
     open: boolean;
     handleClose: () => void;
+    pointOfSaleList: PointOfSale[];
 }
 
-const AddPosDialog: React.FC<AddPosDialogProps> = ({open, handleClose}) => {
+const AddPosDialog: React.FC<AddPosDialogProps> = ({open, handleClose, pointOfSaleList}) => {
     const [posName, setPosName] = useState<string>("")
     const [address, setAddress] = useState<string>("");
 
@@ -35,6 +37,14 @@ const AddPosDialog: React.FC<AddPosDialogProps> = ({open, handleClose}) => {
             if(posName !== "" && address !== ""){
                 const addPosResponse = await axiosInstance.post('pointOfSale', newPos);
                 console.log(addPosResponse);
+                const posToAdd: PointOfSale = {
+                    idPointOfSale: addPosResponse.data.idPoitOfsale,
+                    pointOfSaleName: addPosResponse.data.pointOfSaleName,
+                    address: addPosResponse.data.address
+                }
+
+                pointOfSaleList.push(posToAdd);
+                
                 enqueueSnackbar('Le point de vente a été ajouté avec succès', { variant: 'success' })
                 resetForm();
                 handleClose();

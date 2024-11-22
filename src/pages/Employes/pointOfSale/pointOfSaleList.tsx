@@ -81,7 +81,8 @@ const PointOfSaleList = () => {
                 <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handelOpenAddPosDialog}>Point de vente</Button>
 
                 <AddPosDialog open={openAddPosDialog}
-                                handleClose={handleCloseAddPosDialog} />
+                                handleClose={handleCloseAddPosDialog} 
+                                pointOfSaleList={pointOfSaleList}/>
 
                 <EditPosDialog open={openEditPosDialog}
                                 handleClose={handleCloseEditPosDialog} 

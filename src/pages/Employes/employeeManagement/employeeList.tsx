@@ -8,6 +8,7 @@ import { Employee } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import EditEmployeeDialog from "./editEmployeeDialog";
 import { transformToEmployeeList } from "../../../Hooks/useGroupData";
+import DeleteEmployeeDilog from "./deleteEmployeeDialog";
 
 const translatedPermissions: { [key: string]: string } = {
     canAddCategory: "Peut ajouter catégorie",
@@ -48,6 +49,7 @@ const EmployeeList: React.FC = () => {
 
     const [openAddEmployee, setOpenAddEmployee] = useState(false);
     const [openEditEmployee, setOpenEditEmployee] = useState(false);
+    const [openDeleteEmployee, setOpenDeleteEmployee] = useState(false);
 
     const [selectedEmployee, setSelectedEmployee] = useState<Employee>();
 
@@ -84,6 +86,15 @@ const EmployeeList: React.FC = () => {
         setOpenEditEmployee(false);
     }
 
+    const handleOpenDeleteEmployee = (selectedEmployee: Employee) => {
+        setSelectedEmployee(selectedEmployee);
+        setOpenDeleteEmployee(true);
+    }
+
+    const handleCloseDeleteEmployee = () => {
+        setOpenDeleteEmployee(false);
+    }
+
     const formatPermissions = (permissions: any) => {
         return Object.entries(permissions)
             .filter(([key, value]) => key.startsWith("can") && value === true)
@@ -106,6 +117,12 @@ const EmployeeList: React.FC = () => {
                                 selectedEmployee={selectedEmployee}
                                 employeeList={employeeList}/>
 
+            <DeleteEmployeeDilog open={openDeleteEmployee}
+                                    handleClose={handleCloseDeleteEmployee}
+                                    selectedEmployee={selectedEmployee}
+                                    employeeList={employeeList}
+                                    setEmployeeList={setEmployeeList} />
+
             <div>
                 {employeeList.map((employee) => (
 
@@ -124,7 +141,7 @@ const EmployeeList: React.FC = () => {
                             </CardContent>
                         <CardActions>
                             <IconButton onClick={() => handleOpenEditEmployee(employee)}><EditSharp /></IconButton>
-                            <IconButton><DeleteSharp /></IconButton>
+                            <IconButton onClick={() => handleOpenDeleteEmployee(employee)}><DeleteSharp /></IconButton>
                         </CardActions>
                     </Card>
 

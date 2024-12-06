@@ -1,5 +1,5 @@
 import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Stack } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axiosInstance from "../../../axiosInstance";
 import { Employee, PointOfSale } from "../../../Hooks/types";
 import InputField from "../../../Components/Common/Input";
@@ -9,6 +9,7 @@ import { AxiosResponse } from "axios";
 interface AddEmployeeProps {
     open: boolean;
     handleClose: () => void;
+    employeeList: Employee[];
 }
 
 interface TranslatedPermissions {
@@ -16,27 +17,47 @@ interface TranslatedPermissions {
 }
 
 const translatedPermissions: TranslatedPermissions = {
-    canModifyProduct: "Peut modifier produit",
-    canAddProduct: "Peut ajouter produit",
-    canDeleteProduct: "Peut supprimer produit",
     canAddCategory: "Peut ajouter catégorie",
     canDeleteCategory: "Peut supprimer catégorie",
     canEditCategory: "Peut modifier catégorie",
+    canAddAppConfiguration: "Peut ajouter configuration de l'application",
+    canEditAppConfiguration: "Peut modifier configuration de l'application",
+    canAddProduct: "Peut ajouter produit",
+    canDeleteProduct: "Peut supprimer produit",
+    canEditProduct: "Peut modifier produit",
     canAddProductType: "Peut ajouter type de produit",
     canDeleteProductType: "Peut supprimer type de produit",
-    canEditProduct: "Peut modifier produit",
     canAddEmployee: "Peut ajouter employé",
-    canAddPointOfSale: "Peut ajouter point de vente",
     canDeleteEmployee: "Peut supprimer employé",
-    canDeletePointOfSale: "Peut supprimer point de vente",
     canEditEmployee: "Peut modifier employé",
-    canEditPointOfSale: "Peut modifier point de vente"
+    canAddPointOfSale: "Peut ajouter point de vente",
+    canDeletePointOfSale: "Peut supprimer point de vente",
+    canEditPointOfSale: "Peut modifier point de vente",
+    canAddLoss: "Peut ajouter perte",
+    canDeleteLoss: "Peut supprimer perte",
+    canEditLoss: "Peut modifier perte",
+    canAddOrder: "Peut ajouter commande",
+    canDeleteOrder: "Peut supprimer commande",
+    canEditOrder: "Peut modifier commande",
+    canAddSale: "Peut ajouter vente",
+    canDeleteSale: "Peut supprimer vente",
+    canEditSale: "Peut modifier vente",
+    canAddTransfer: "Peut ajouter transfert",
+    canDeleteTransfer: "Peut supprimer transfert",
+    canEditTransfer: "Peut modifier transfert",
+    canEditProductStock: "Peut modifier stock de produit",
+    canEditCommandStatus: "Peut modifier statut de commande",
+    canConfirmCommand: "Peut confirmer commande"
 };
-
-const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose }) => {
+const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, employeeList }) => {
     const [pointOfSaleList, setPointOfSaleList] = useState<PointOfSale[]>([]);
 
-    const [checkState, setCheckState] = useState<Record<string, boolean>>({});
+    const [checkState, setCheckState] = useState<Record<string, boolean>>(
+        Object.keys(translatedPermissions).reduce((acc, permission) => {
+            acc[permission] = false;
+            return acc;
+        }, {} as Record<string, boolean>)
+    );
 
     const [selectedPointOfSaleId, setSelectedPointOfSaleId] = useState<number | "">("");
     const [selectedPos, setSelectedPos] = useState<PointOfSale>();
@@ -50,32 +71,22 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose }) =>
         setSelectedPointOfSaleId("");
         setNameEmployee("");
         setMailEmployee("");
-        // setCheckState(actions.reduce((acc: Record<string, boolean>, curr: string) => {
-        //     acc[curr] = false;
-        //     return acc;
-        // }, {}))
+        setCheckState(
+            Object.keys(translatedPermissions).reduce((acc, permission) => {
+                acc[permission] = false;
+                return acc;
+            }, {} as Record<string, boolean>)
+        );
     }
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [getPosResponse, getActionResponse] = await Promise.all([
-                    axiosInstance.get('/pointOfSales'),
-                    axiosInstance.get('/actionEmployees'),
+                const [getPosResponse] = await Promise.all([
+                    axiosInstance.get('/pointOfSales')
                 ]);
 
                 setPointOfSaleList(getPosResponse.data);
-
-                const actions = getActionResponse.data.slice(1, -1).map((data: any) => data[0]);
-
-                console.log(actions);
-                
-
-                const initialSelectState = actions.reduce((acc: Record<string, boolean>, curr: string) => {
-                    acc[curr] = false;
-                    return acc;
-                }, {});
-                setCheckState(initialSelectState);
             } catch (error) {
                 console.error(error);
             }
@@ -101,56 +112,54 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose }) =>
        try{
 
             let addEmployeeResponse: AxiosResponse<Employee> | null = null;
-
+            console.log(checkState);
+            
             if(nameEmployee !== "" && mailEmployee !== "" && selectedPos!== null && selectedPos !== undefined ){
                     const newEmployee:Employee = {
                         nameEmployee: nameEmployee,
                         mailEmployee: mailEmployee,
                         password:"hhhhh",
-                        pointOfSale: selectedPos
+                        pointOfSale: selectedPos,
+                        ...checkState
                     }
 
                     console.log("newEMployee : ", newEmployee);
                     
                     addEmployeeResponse = await axiosInstance.post('/employee', newEmployee);
+                    if(addEmployeeResponse !== null){
+                        employeeList.push(addEmployeeResponse.data);
+                    }
+                    
                     console.log(addEmployeeResponse);
+                    enqueueSnackbar("Employé ajouté avec succès", {variant: "success"});
+                    resetForm();
+                    handleClose();
 
-            } else if(nameEmployee !== "" && mailEmployee !== "" && selectedPos === null ){
+            } else if(nameEmployee !== "" && mailEmployee !== "" && selectedPos === undefined ){
                     console.log("pos is null");
                     
                     const newEmployee:Employee = {
                         nameEmployee: nameEmployee,
                         mailEmployee: mailEmployee,
                         password: "hhhhh",
+                        ...checkState
                     }
                     addEmployeeResponse = await axiosInstance.post('/employee', newEmployee);
+                    if(addEmployeeResponse !== null){
+                        employeeList.push(addEmployeeResponse.data);
+                    }
                     console.log(addEmployeeResponse);
-                
+                    enqueueSnackbar("Employé ajouté avec succès", {variant: "success"});
+                    resetForm();
+                    handleClose();
             } else {
                 enqueueSnackbar("Veuillez remplir tous les champs s'il vous plait", { variant: "warning"});
             }
             
-            const employeeActions = {
-                employee: addEmployeeResponse?.data,
-                ...checkState
-                
-            }
-            
-            try{
-                await axiosInstance.post('/actions', employeeActions);
-                enqueueSnackbar("L'employé a été ajouté avec succès", {variant: "success"})
-                resetForm();
-                handleClose();
-            } catch(error){
-                await axiosInstance.delete(`/employee/${addEmployeeResponse?.data.idEmployee}`);
-                enqueueSnackbar(`Echec de l'ajout de l'employé : ${error}`, {variant: 'error'} );
-            }
-            
-            
        }catch(error){
             enqueueSnackbar(`Echec de l'ajout de l'employé : ${error}`, {variant: 'error'} );
-            resetForm();
-            handleClose();
+            // resetForm();
+            // handleClose();
        }
     }
 

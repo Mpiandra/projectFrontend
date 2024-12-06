@@ -30,27 +30,28 @@ const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> =
     const [productTypeAttributes, setProductTypeAttributes] = useState<{
         attributeName: string,
         attributeType: string,
-        productType?: {
-            idProductType: number,
-            productTypeName: string,
-            category: {
-                idCategory: number,
-                categoryName: string
-            }
-        }
+        parent: string,
+        idParent?: number
     }[]>([]);
 
     const handleAddAttribute = () => {
         productTypeAttributes.push({
             attributeName: "",
-            attributeType: ""
+            attributeType: "",
+            parent: "productType"
         });
 
         console.log('cat', productTypeAttributes)
         setProductTypeAttributes([...productTypeAttributes]);
     }
 
-    const handleCancelClick = () => {
+    const resetForm = () => {
+        setProductTypeName(undefined);
+        setProductTypeAttributes([]);
+    };
+
+    const handleCancel = () => {
+        resetForm();
         handleClose();
     }
 
@@ -64,31 +65,42 @@ const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> =
       try{
           if(productTypeName){
                 const newProductType = await axiosInstance.post('/productType', {productTypeName: productTypeName, category : {idCategory, categoryName }});
-                productTypeAttributes.map((attribute) => (
-                    attribute.productType = newProductType.data
-                ));
-                console.log(productTypeAttributes)
-                const newProductTypeAttribute = await axiosInstance.post('/productTypeAttributes', productTypeAttributes);
-                console.log(newProductTypeAttribute);
-                
+                const newProductTypeData = newProductType.data;
+                try{
+                    const updatedProductTypeAttributes = productTypeAttributes
+                        .filter(attribute => !(attribute.attributeName === "" && attribute.attributeType === ""))
+                        .map(attribute => ({
+                            ...attribute,
+                            idParent: newProductTypeData.idProductType,
+                    }));
+                    console.log(updatedProductTypeAttributes)
+                    const newProductTypeAttribute = await axiosInstance.post('/attributes', updatedProductTypeAttributes);
+                    console.log(newProductTypeAttribute);
 
-                const filteredCategoryDataList = categoryDataList.filter((item) => {
-                    if(item.idCategory !== idCategory){
-                        return true;
-                    }else{
-                        item.productTypes.push(newProductType.data)
-                        item.productTypes.map((productType) => {
-                            if(productType.idProductType === newProductType.data.idProductType){
-                                productType.attributes=newProductTypeAttribute.data;
-                            }
-                        })
-                        return true;
+                    const filteredCategoryDataList = categoryDataList.filter((item) => {
+                        if(item.idCategory !== idCategory){
+                            return true;
+                        }else{
+                            item.productTypes.push(newProductType.data)
+                            item.productTypes.map((productType) => {
+                                if(productType.idProductType === newProductType.data.idProductType){
+                                    productType.attributes=newProductTypeAttribute.data;
+                                }
+                            })
+                                return true;
+                        }
+                    })
+        
+                    setCategoryDataList(filteredCategoryDataList);
+                    resetForm();
+                    enqueueSnackbar("Le type de produit a été ajouté avec succès", {variant: "success"});
+                    handleClose();
+                        
+                }catch(error){
+                    axiosInstance.delete(`/productType/${newProductTypeData.idProductType}`);
+                    enqueueSnackbar(`Echec de l'ajout du type de produit : ${error}`, {variant: "error"});
                 }
-            })
-
-            setCategoryDataList(filteredCategoryDataList);
-            enqueueSnackbar("Le type de produit a été ajouté avec succès", {variant: "success"});
-            handleClose();
+                
           } else {
             enqueueSnackbar("Veuillez remplir tous les champs, s'il vous plait", {variant: "warning"});
           }
@@ -151,7 +163,7 @@ const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> =
                 </Stack>
                 <DialogActions>
                     <Button variant={"outlined"} size={"small"} onClick={handleSubmit}>Envoyer</Button>
-                    <Button variant={"outlined"} size={"small"} onClick={handleCancelClick}>Annuler</Button>
+                    <Button variant={"outlined"} size={"small"} onClick={handleCancel}>Annuler</Button>
                 </DialogActions>
                 
             </Stack>

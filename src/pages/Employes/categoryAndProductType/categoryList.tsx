@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../axiosInstance.ts";
-import {Button, ButtonGroup, Stack} from "@mui/material";
+import {Button, ButtonGroup, IconButton, Stack} from "@mui/material";
 import MenuEmployee from "../../../Components/Employes/menuEmployee.tsx";
 import {AddSharp, DeleteSharp, EditSharp} from "@mui/icons-material";
 import EditCategoryDialog from "./editCategory.tsx";
 import DeleteCategoryDialog from "./deleteCategory.tsx";
 import AddCategoryDialog from "./addCategoryDialog.tsx";
 import AddProductTypeandAttributes from "./addProductTypeandAttributes.tsx";
-import { CategoryJoinProductType } from "../../../Hooks/types.ts";
+import { CategoryJoinProductType, ProductTypeJoinProductTypeAttribute } from "../../../Hooks/types.ts";
 import { groupData} from "../../../Hooks/useGroupData.ts";
 import { SnackbarProvider } from "notistack";
+import DeleteProductType from "./deleteProductType.tsx";
 
 // Types
 
@@ -19,8 +20,10 @@ const CategoryList: React.FC = () => {
     const [openDeleteCategoryDialog, setOpenDeleteCategoryDialog] = useState(false)
     const [openAddCategoryDialog, setOpenAddCategoryDialog] = useState(false);
     const [openAddProductTypeDialog, setOpenAddProductTypeDialog] = useState(false);
+    const [openDeleteProductTypeDialog, setOpenDeleteProductTypeDialog] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState<CategoryJoinProductType | null>(null)
+    const [selectedProductType, setSelectedProductType] = useState<ProductTypeJoinProductTypeAttribute | null>(null)
 
     const handleCloseCategoryEdit= () => {
         setOpenEditCategoryDialog(false);
@@ -29,6 +32,15 @@ const CategoryList: React.FC = () => {
     const handleOpenCategoryEdit = (category : CategoryJoinProductType) => {
         setSelectedCategory(category);
         setOpenEditCategoryDialog(true);
+    }
+
+    const handleOpenDeleteProductType = (productType: ProductTypeJoinProductTypeAttribute) => {
+        setSelectedProductType(productType);
+        setOpenDeleteProductTypeDialog(true);
+    }
+
+    const handleCloseDeleteProductType = () => {
+        setOpenDeleteProductTypeDialog(false);
     }
 
     const handleCloseCategoryDelete = () => {
@@ -63,9 +75,12 @@ const CategoryList: React.FC = () => {
         const fetchData = async () => {
             try {
                 const response = await axiosInstance.get('/categoryData');
+                console.log(response)
                 const data = response.data;
                 
+                console.log(data)
                 const groupedData = groupData({data});
+                console.log(groupedData);
 
                 // Mettez à jour l'état avec les données groupées
                 setCategoryDataList(groupedData);
@@ -106,13 +121,19 @@ const CategoryList: React.FC = () => {
                                          categoryDataList={categoryDataList}
                                          setCategoryDataList={setCategoryDataList}
             />
+            <DeleteProductType open={openDeleteProductTypeDialog}
+                                handleClose={handleCloseDeleteProductType}
+                                idProductType={selectedProductType?.idProductType}
+                                categoryDataList={categoryDataList}
+                                setCategoryDataList={setCategoryDataList} />
 
             {categoryDataList.map((category, index) => {
                 return (
                     <div key={index}>
                         <Stack
                             direction={"row"}
-                            spacing={6}
+                            justifyContent={"space-between"}
+                            alignItems={"center"}
                         >
                             <h2>{category.categoryName}</h2>
                             <ButtonGroup variant={"text"}>
@@ -124,7 +145,14 @@ const CategoryList: React.FC = () => {
                         {category.productTypes.map((productType, index) => {
                             return(
                                 <ul key={index}>
-                                    <li key={productType.idProductType}>{productType.productTypeName}</li>
+                                    <li key={productType.idProductType}>
+                                        <Stack direction={"row"}
+                                                justifyContent={"space-between"}
+                                                alignItems={"center"}>
+                                                    {productType.productTypeName}
+                                                    <IconButton onClick={() => handleOpenDeleteProductType(productType)}><DeleteSharp/></IconButton>
+                                        </Stack>
+                                    </li>
                                     {productType.attributes.map((attribute, index) => {
                                         return(
                                             <ul key={index}>
@@ -141,6 +169,6 @@ const CategoryList: React.FC = () => {
             })}
         </SnackbarProvider>
     );
-};
+};  
 
 export default CategoryList;

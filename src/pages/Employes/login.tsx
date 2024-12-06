@@ -4,11 +4,13 @@ import {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../axiosInstance.ts";
 import {useNavigate} from "react-router-dom";
 import {Button, Stack} from "@mui/material";
+import { useSnackbar } from "notistack";
 
 const Login: React.FC = () => {
     const[mailEmployee, setMailEmployee] : [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
     const[password, setPassword] : [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleSubmit = async () => {
         if(!mailEmployee || !password){
@@ -16,10 +18,18 @@ const Login: React.FC = () => {
         } else {
             try {
                 const response = await axiosInstance.post("/auth/login", {mailEmployee, password});
-                console.log(response.data);
-                localStorage.setItem("token", response.data);
+
+                const {token, employee} = response.data;
+
+                localStorage.setItem("token", token);
+                localStorage.setItem("employee", JSON.stringify(employee));
+
+                enqueueSnackbar("Connexion réussie", {variant: "success"});
+                
+                
                 navigate('/employeeHome')
             }catch (error){
+                enqueueSnackbar(`Erreur d'authentification ${error}`, {variant: "error"});
                 console.error(error);
             }
         }

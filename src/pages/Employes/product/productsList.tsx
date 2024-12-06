@@ -134,7 +134,7 @@ const ProductsList: React.FC = () => {
                                                             <p>Prix : {product.price}</p>
                                                             {product.attributes.map((attribute) => {
                                                                 return (
-                                                                    <p key={attribute.idAttribute}>{attribute.attributeName} : {attribute.attributeValue}</p>
+                                                                    <p key={attribute.attributeId}>{attribute.attributeName} : {attribute.attributeValue}</p>
                                                                 )
                                                             })}
                                                         </CardContent>

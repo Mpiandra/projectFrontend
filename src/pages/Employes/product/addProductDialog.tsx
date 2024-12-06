@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,  InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Stack, TextField } from "@mui/material";
-import { CategoryJoinProductType, ProductJoinProductType, ProductAttributeJoinProduct, ProductTypeJoinProductTypeAttribute, AllProductData, ProductAttribute, ProductJoinProductAttribute } from "../../../Hooks/types";
+import { CategoryJoinProductType, ProductJoinProductType, ProductTypeJoinProductTypeAttribute, AllProductData, ProductAttribute, ProductJoinProductAttribute, Attribute } from "../../../Hooks/types";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import InputField from "../../../Components/Common/Input";
 import axiosInstance from "../../../axiosInstance";
@@ -25,8 +25,19 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
 
     const { enqueueSnackbar } = useSnackbar();
 
+    const resetForm = () => {
+        setSelectedProductType(null);
+        setSelectedProductTypeId("");
+        setProductName("");
+        setPrice("");
+    }
 
-    const [productAttributes, setProductAttributes] = useState<ProductAttributeJoinProduct[]>([]);
+    const handleCancel = () => {
+        resetForm();
+        handleClose();
+    }
+
+    const [productAttributes, setProductAttributes] = useState<Attribute[]>([]);
 
 
     const handleChange = (event: SelectChangeEvent<number>) => {
@@ -81,11 +92,12 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                 console.log("productResponse : ",productResponse);
         
                 productAttributes.map((productAttribute) => {
-                    productAttribute.product = productResponse.data
+                    productAttribute.idParent = productResponse.data.idProduct;
                 })
                 
+                console.log(productAttributes);
                 try{
-                    productAttributesResponse =  await axiosInstance.post("/productAttributes", productAttributes)
+                    productAttributesResponse =  await axiosInstance.post("/attributes", productAttributes)
                     console.log("productAttributesResponse : ", productAttributesResponse)
                 } catch(error){
                     await axiosInstance.delete('/product', productResponse.data);
@@ -118,6 +130,7 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                 })
                 //setProductDataList(pDataList);
                 enqueueSnackbar("Le produit a été ajouté avec succès", {variant: "success"});
+                resetForm();
                 handleClose();
     
             } else {
@@ -130,10 +143,12 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
         
     }
 
-    const handleChangeInput = (index: number, attributeName: string, value: string) => {
+    const handleChangeInput = (index: number, attributeName: string, value: string, attributeType: string) => {
         productAttributes[index] = {
             attributeName: attributeName,
-            attributeValue: value
+            attributeValue: value,
+            attributeType: attributeType,
+            parent: "product"
         };
         
         setProductAttributes(productAttributes);
@@ -188,7 +203,7 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                             return (
                                 <InputField key={attribute.attributeId} 
                                 index={index}
-                                onChange={(value: string) => handleChangeInput(index, attribute.attributeName, value)}
+                                onChange={(value: string) => handleChangeInput(index, attribute.attributeName, value, attribute.attributeType)}
                                             type={attribute.attributeType} 
                                             label={attribute.attributeName} 
                                 required/>
@@ -202,7 +217,7 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
             </DialogContent>
             <DialogActions>
                 <Button variant="outlined" onClick={handleAddProduct}>Ajouter</Button>
-                <Button variant="outlined" onClick={handleClose}>Annuler</Button>
+                <Button variant="outlined" onClick={handleCancel}>Annuler</Button>
             </DialogActions>
         </Dialog>
         </>

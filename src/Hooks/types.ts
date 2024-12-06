@@ -19,7 +19,7 @@ export type AllProductData = {
 export type ProductTypeJoinProductTypeAttribute = {
     idProductType: number;
     productTypeName: string;
-    attributes: ProductTypeAttribute[];
+    attributes: Attribute[];
 };
 
 export type ProductTypeJoinProduct = {
@@ -30,10 +30,13 @@ export type ProductTypeJoinProduct = {
 
 
 
-export type ProductTypeAttribute = {
-    attributeId: number;
+export type Attribute = {
+    attributeId?: number;
     attributeName: string;
     attributeType: string;
+    parent: string;
+    attributeValue: string;
+    idParent?: number;
 };
 
 
@@ -64,7 +67,7 @@ export type ProductJoinProductAttribute = {
     productName: string;
     price: number;
     imageUrl: string;
-    attributes: ProductAttribute[];
+    attributes: Attribute[];
 }
 
 export type ProductAttribute = {
@@ -86,6 +89,8 @@ export type AllDataProps = {
     attributeName: string;
     attributeValue: string;
     attributeType: string;
+    parent: string;
+    idParent: number;
 }
 
 export type PointOfSale = {

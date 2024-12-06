@@ -7,22 +7,32 @@ import ProductsList from "./pages/Employes/product/productsList.tsx";
 import CategoryList from "./pages/Employes/categoryAndProductType/categoryList.tsx";
 import PointOfSaleList from "./pages/Employes/pointOfSale/pointOfSaleList.tsx";
 import EmployeeList from "./pages/Employes/employeeManagement/employeeList.tsx";
+import { SnackbarProvider } from "notistack";
 
 function App() {
 
   return (
     <>
-        <Router>
-            <Routes>
-                <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/" element={<ProductList/>} />
-                <Route path="/employeeHome" element={<ProtectedRoute><ProductsList /></ProtectedRoute>} />
-                <Route path="/categoryList" element={<ProtectedRoute><CategoryList/></ProtectedRoute>} />
-                <Route path="/pointOfSale" element={<ProtectedRoute><PointOfSaleList /></ProtectedRoute>} />
-                <Route path="/employee" element={<ProtectedRoute><EmployeeList /></ProtectedRoute>} />
-            </Routes>
+    <SnackbarProvider maxSnack={5}
+                      anchorOrigin={
+                        {
+                          vertical: "top",
+                          horizontal: "right"
+                        }
+                      }>
+      <Router>
+              <Routes>
+                  <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/" element={<ProductList/>} />
+                  <Route path="/employeeHome" element={<ProtectedRoute><ProductsList /></ProtectedRoute>} />
+                  <Route path="/categoryList" element={<ProtectedRoute><CategoryList/></ProtectedRoute>} />
+                  <Route path="/pointOfSale" element={<ProtectedRoute><PointOfSaleList /></ProtectedRoute>} />
+                  <Route path="/employee" element={<ProtectedRoute><EmployeeList /></ProtectedRoute>} />
+              </Routes>
         </Router>
+    </SnackbarProvider>
+        
     </>
 
   )

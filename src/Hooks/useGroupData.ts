@@ -46,6 +46,8 @@ export function groupData ({data} : GroupDataProps) {
                     attributeId: item.attributeId,
                     attributeName: item.attributeName,
                     attributeType: item.attributeType,
+                    parent: item.parent,
+                    attributeValue: item.attributeValue
                 });
             }
         }
@@ -117,9 +119,12 @@ export function transformToAllProductData(data: AllDataProps[]): AllProductData[
 
         if (item.idAttribute) {
             product.attributes.push({
-                idAttribute: item.idAttribute,
+                attributeId: item.idAttribute,
                 attributeName: item.attributeName,
                 attributeValue: item.attributeValue,
+                attributeType: item.attributeType,
+                parent: item.parent,
+                idParent: item.idParent
             });
         }
     });

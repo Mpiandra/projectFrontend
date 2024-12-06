@@ -1,8 +1,9 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from "@mui/material"
-import { AllProductData, CategoryJoinProductType, ProductAttributeJoinProduct, ProductJoinProductAttribute, ProductJoinProductType   } from "../../../Hooks/types";
+import { AllProductData, Attribute, CategoryJoinProductType, ProductJoinProductAttribute, ProductJoinProductType   } from "../../../Hooks/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import InputField from "../../../Components/Common/Input";
 import axiosInstance from "../../../axiosInstance";
+import { useSnackbar } from "notistack";
 
 interface EditProductDialogProps {
     open: boolean;
@@ -20,23 +21,31 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({open, handleClose,
     const [price, setPrice] = useState<string>("");
     const [imageFile, setImageFile] = useState<File>();
 
-    const [newProductAttributes, setNewProductAttributes] = useState<ProductAttributeJoinProduct[]>([]);
+    const [newProductAttributes, setNewProductAttributes] = useState<Attribute[]>([]);
+
+    const {enqueueSnackbar} = useSnackbar();
 
      useEffect(() => {
         if(selectedProduct){
             setProductName(selectedProduct.productName);
             setPrice(selectedProduct.price.toString());
+            console.log(selectedProduct)
 
-            const dynamicAttributes : ProductAttributeJoinProduct[] = [];
+            const dynamicAttributes : Attribute[] = [];
             selectedProduct.attributes.map((attribute) => {
+                console.log("attributeID : ", attribute.attributeId)
                 const attr = {
-                    idAttribute: attribute.idAttribute,
+                    attributeId: attribute.attributeId,
                     attributeName : attribute.attributeName,
-                    attributeValue: attribute.attributeValue
+                    attributeValue: attribute.attributeValue,
+                    attributeType: attribute.attributeType,
+                    parent : attribute.parent,
+                    idParent: attribute.idParent
                 }
                 dynamicAttributes.push(attr);
                 
             })
+            console.log(dynamicAttributes);
             setNewProductAttributes(dynamicAttributes);
         }
         console.log(selectedProduct);
@@ -53,12 +62,14 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({open, handleClose,
         }
     }
 
-    const handleChangeInput = (index: number, idAttribute: number, attributeName: string, value: string) => {
+    const handleChangeInput = (index: number, idAttribute: number | undefined, attributeName: string, value: string, attributeType: string) => {
         const updateAttributes = [...newProductAttributes];
         updateAttributes[index] = {
-            idAttribute: idAttribute,
+            attributeId: idAttribute,
             attributeName: attributeName,
-            attributeValue: value
+            attributeValue: value,
+            attributeType: attributeType,
+            parent: "product"
         };
         
         setNewProductAttributes(updateAttributes);
@@ -78,7 +89,8 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({open, handleClose,
             }
             const updatedProductResponse = await axiosInstance.put(`/product/${selectedProduct?.idProduct}`, formData);
             
-            await axiosInstance.put('productAttributes', newProductAttributes);
+            console.log(newProductAttributes);
+            await axiosInstance.put('/attributes', newProductAttributes);
 
             productDataList.map((category) => {
                 category.productTypes.map((productType) => {
@@ -92,8 +104,10 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({open, handleClose,
                     })
                 })
             })
+            enqueueSnackbar("Le produit est modifié avec succès", {variant: "success"});
             handleClose();
         }catch(error){
+            enqueueSnackbar(`Echec de la modification du produit : ${error}`);
             console.error('error : ', error);
         }
     }
@@ -132,7 +146,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({open, handleClose,
                                     <InputField key={index} type="text"
                                                 label={attribute.attributeName}
                                                 value={attribute.attributeValue}
-                                                onChange={(value: string) => handleChangeInput(index, attribute.idAttribute, attribute.attributeName, value)} />
+                                                onChange={(value: string) => handleChangeInput(index, attribute.attributeId, attribute.attributeName, value, attribute.attributeType)} />
                                 )
                             })}
 

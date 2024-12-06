@@ -1,4 +1,4 @@
-import { AllDataProps, AllProductData, CategoryJoinProductType, ProductTypeJoinCategory } from "./types";
+import { AllDataProps, AllProductData, CategoryJoinProductType, Employee, Permissions, ProductTypeJoinCategory } from "./types";
 
 interface GroupDataProps {
     data : {
@@ -131,3 +131,55 @@ export function transformToAllProductData(data: AllDataProps[]): AllProductData[
 
     return Array.from(categoryMap.values());
 }
+
+export function transformToEmployeeList(data: any[]): Employee[] {
+    const listEmployeeFormated: Employee[] = [];
+    data.map((employeeData) => {
+      const permissions: Permissions = {
+        canAddCategory: employeeData.canAddCategory,
+        canDeleteCategory: employeeData.canDeleteCategory,
+        canEditCategory: employeeData.canEditCategory,
+        canAddAppConfiguration: employeeData.canAddAppConfiguration,
+        canEditAppConfiguration: employeeData.canEditAppConfiguration,
+        canAddProduct: employeeData.canAddProduct,
+        canDeleteProduct: employeeData.canDeleteProduct,
+        canEditProduct: employeeData.canEditProduct,
+        canAddProductType: employeeData.canAddProductType,
+        canDeleteProductType: employeeData.canDeleteProductType,
+        canAddEmployee: employeeData.canAddEmployee,
+        canDeleteEmployee: employeeData.canDeleteEmployee,
+        canEditEmployee: employeeData.canEditEmployee,
+        canAddPointOfSale: employeeData.canAddPointOfSale,
+        canDeletePointOfSale: employeeData.canDeletePointOfSale,
+        canEditPointOfSale: employeeData.canEditPointOfSale,
+        canAddLoss: employeeData.canAddLoss,
+        canDeleteLoss: employeeData.canDeleteLoss,
+        canEditLoss: employeeData.canEditLoss,
+        canAddOrder: employeeData.canAddOrder,
+        canDeleteOrder: employeeData.canDeleteOrder,
+        canEditOrder: employeeData.canEditOrder,
+        canAddSale: employeeData.canAddSale,
+        canDeleteSale: employeeData.canDeleteSale,
+        canEditSale: employeeData.canEditSale,
+        canAddTransfer: employeeData.canAddTransfer,
+        canDeleteTransfer: employeeData.canDeleteTransfer,
+        canEditTransfer: employeeData.canEditTransfer,
+        canEditProductStock: employeeData.canEditProductStock,
+        canEditCommandStatus: employeeData.canEditCommandStatus,
+        canConfirmCommand: employeeData.canConfirmCommand,
+      };
+  
+      // Retourner un objet Employee en respectant le type Employee
+        const newmployee = {
+        idEmployee: employeeData.idEmployee,
+        nameEmployee: employeeData.nameEmployee,
+        mailEmployee: employeeData.mailEmployee,
+        password: employeeData.password, // Vous pouvez choisir de ne pas inclure le mot de passe si ce n'est pas nécessaire
+        pointOfSale: employeeData.pointOfSale,
+        permissions: permissions, // Attacher l'objet permissions
+      };
+
+      listEmployeeFormated.push(newmployee);
+    });
+    return listEmployeeFormated;
+  };

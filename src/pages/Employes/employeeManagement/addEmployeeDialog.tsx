@@ -1,7 +1,7 @@
 import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Stack } from "@mui/material";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../axiosInstance";
-import { Employee, PointOfSale } from "../../../Hooks/types";
+import { Employee, Permissions, PointOfSale } from "../../../Hooks/types";
 import InputField from "../../../Components/Common/Input";
 import { useSnackbar } from "notistack";
 import { AxiosResponse } from "axios";
@@ -52,11 +52,11 @@ const translatedPermissions: TranslatedPermissions = {
 const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, employeeList }) => {
     const [pointOfSaleList, setPointOfSaleList] = useState<PointOfSale[]>([]);
 
-    const [checkState, setCheckState] = useState<Record<string, boolean>>(
+    const [checkState, setCheckState] = useState<Permissions>(
         Object.keys(translatedPermissions).reduce((acc, permission) => {
-            acc[permission] = false;
+            acc[permission as keyof Permissions] = false;
             return acc;
-        }, {} as Record<string, boolean>)
+        }, {} as Permissions)
     );
 
     const [selectedPointOfSaleId, setSelectedPointOfSaleId] = useState<number | "">("");
@@ -73,9 +73,9 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
         setMailEmployee("");
         setCheckState(
             Object.keys(translatedPermissions).reduce((acc, permission) => {
-                acc[permission] = false;
+                acc[permission as keyof Permissions] = false;
                 return acc;
-            }, {} as Record<string, boolean>)
+            }, {} as Permissions)
         );
     }
 
@@ -95,7 +95,7 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
         fetchData();
     }, []);
 
-    const handleCheckboxChange = (action: string) => {
+    const handleCheckboxChange = (action: keyof Permissions) => {
         setCheckState((prevState) => ({
             ...prevState,
             [action]: !prevState[action],
@@ -120,7 +120,7 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
                         mailEmployee: mailEmployee,
                         password:"hhhhh",
                         pointOfSale: selectedPos,
-                        ...checkState
+                        permissions: checkState
                     }
 
                     console.log("newEMployee : ", newEmployee);
@@ -142,7 +142,7 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
                         nameEmployee: nameEmployee,
                         mailEmployee: mailEmployee,
                         password: "hhhhh",
-                        ...checkState
+                        permissions: checkState
                     }
                     addEmployeeResponse = await axiosInstance.post('/employee', newEmployee);
                     if(addEmployeeResponse !== null){
@@ -198,8 +198,8 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
                                     key={action}
                                     control={
                                         <Checkbox
-                                            checked={checkState[action]}
-                                            onChange={() => handleCheckboxChange(action)}
+                                            checked={checkState[action as keyof Permissions]}
+                                            onChange={() => handleCheckboxChange(action as keyof Permissions)}
                                             name={action}
                                         />
                                     }

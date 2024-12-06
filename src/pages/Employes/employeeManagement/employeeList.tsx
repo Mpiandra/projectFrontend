@@ -6,6 +6,8 @@ import AddEmployeeDialog from "./addEmployeeDialog";
 import { SnackbarProvider } from "notistack";
 import { Employee } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
+import EditEmployeeDialog from "./editEmployeeDialog";
+import { transformToEmployeeList } from "../../../Hooks/useGroupData";
 
 const translatedPermissions: { [key: string]: string } = {
     canAddCategory: "Peut ajouter catégorie",
@@ -41,26 +43,30 @@ const translatedPermissions: { [key: string]: string } = {
     canConfirmCommand: "Peut confirmer commande"
 };
 
+
 const EmployeeList: React.FC = () => {
 
     const [openAddEmployee, setOpenAddEmployee] = useState(false);
+    const [openEditEmployee, setOpenEditEmployee] = useState(false);
+
+    const [selectedEmployee, setSelectedEmployee] = useState<Employee>();
+
     const [employeeList, setEmployeeList] = useState<Employee[]>([]);
 
-    // Fetch employee data from API
     useEffect(() => {
         const fetchDataEmployee = async () => {
             try {
                 const getEmployeeResponse = await axiosInstance.get('/employees');
-                setEmployeeList(getEmployeeResponse.data); // Populate employee list
+                setEmployeeList(transformToEmployeeList(getEmployeeResponse.data));
             } catch (error) {
                 console.error(error);
             }
         };
 
         fetchDataEmployee();
+        
     }, []);
 
-    // Open and close AddEmployee dialog
     const handleOpenAddEmployee = () => {
         setOpenAddEmployee(true);
     };
@@ -69,9 +75,17 @@ const EmployeeList: React.FC = () => {
         setOpenAddEmployee(false);
     };
 
-    // Format permissions
-    const formatPermissions = (employee: any) => {
-        return Object.entries(employee)
+    const handleOpenEditEmployee = (selectedEmployee: Employee) => {
+        setSelectedEmployee(selectedEmployee);
+        setOpenEditEmployee(true);
+    }
+
+    const handleCloseEditEmployee = () => {
+        setOpenEditEmployee(false);
+    }
+
+    const formatPermissions = (permissions: any) => {
+        return Object.entries(permissions)
             .filter(([key, value]) => key.startsWith("can") && value === true)
             .map(([key]) => translatedPermissions[key] || key);
     };
@@ -87,6 +101,11 @@ const EmployeeList: React.FC = () => {
                                 handleClose={handleCloseAddEmployee} 
                                 employeeList={employeeList}/>
 
+            <EditEmployeeDialog open={openEditEmployee}
+                                handleClose={handleCloseEditEmployee} 
+                                selectedEmployee={selectedEmployee}
+                                employeeList={employeeList}/>
+
             <div>
                 {employeeList.map((employee) => (
 
@@ -96,15 +115,15 @@ const EmployeeList: React.FC = () => {
                                     subheader={employee.mailEmployee}
                         />
                         <CardContent><Typography>Point de vente : {employee.pointOfSale?.pointOfSaleName || "Aucun"}</Typography></CardContent>
-                        <CardContent><Typography>Permissions :
+                        <CardContent><Typography>Permissions :</Typography>
                                 <ul>
-                                    {formatPermissions(employee).map((permission, index) => (
+                                    {formatPermissions(employee.permissions).map((permission, index) => (
                                     <li key={index}>{permission}</li>
                                 ))}
                                 </ul>
-                            </Typography></CardContent>
+                            </CardContent>
                         <CardActions>
-                            <IconButton><EditSharp /></IconButton>
+                            <IconButton onClick={() => handleOpenEditEmployee(employee)}><EditSharp /></IconButton>
                             <IconButton><DeleteSharp /></IconButton>
                         </CardActions>
                     </Card>

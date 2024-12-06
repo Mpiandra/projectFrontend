@@ -99,10 +99,45 @@ export type PointOfSale = {
     address: string;
 }
 
+export type Permissions = {
+    canAddCategory: boolean;
+    canDeleteCategory: boolean;
+    canEditCategory: boolean;
+    canAddAppConfiguration: boolean;
+    canEditAppConfiguration: boolean;
+    canAddProduct: boolean;
+    canDeleteProduct: boolean;
+    canEditProduct: boolean;
+    canAddProductType: boolean;
+    canDeleteProductType: boolean;
+    canAddEmployee: boolean;
+    canDeleteEmployee: boolean;
+    canEditEmployee: boolean;
+    canAddPointOfSale: boolean;
+    canDeletePointOfSale: boolean;
+    canEditPointOfSale: boolean;
+    canAddLoss: boolean;
+    canDeleteLoss: boolean;
+    canEditLoss: boolean;
+    canAddOrder: boolean;
+    canDeleteOrder: boolean;
+    canEditOrder: boolean;
+    canAddSale: boolean;
+    canDeleteSale: boolean;
+    canEditSale: boolean;
+    canAddTransfer: boolean;
+    canDeleteTransfer: boolean;
+    canEditTransfer: boolean;
+    canEditProductStock: boolean;
+    canEditCommandStatus: boolean;
+    canConfirmCommand: boolean;
+};
+
 export type Employee = {
-    idEmployee ?: number;
+    idEmployee?: number;
     nameEmployee: string;
     mailEmployee: string;
-    password?:string;
-    pointOfSale?:PointOfSale;
-}
+    password?: string;
+    pointOfSale?: PointOfSale;
+    permissions: Permissions; 
+};

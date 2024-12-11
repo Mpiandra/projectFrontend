@@ -1,4 +1,6 @@
+
 import {Link, useNavigate} from "react-router-dom";
+
 
 const MenuEmployee : React.FC = () => {
 
@@ -8,8 +10,6 @@ const MenuEmployee : React.FC = () => {
         localStorage.removeItem('token');
         navigate('/login');
     }
-
-
 
     return (
         <nav>
@@ -24,10 +24,19 @@ const MenuEmployee : React.FC = () => {
                     <Link to="/pointOfSale">Points de vente</Link>
                 </li>
                 <li>
-                    <Link to="/action">Actions</Link>
+                    <Link to="/employee">Employés</Link>
                 </li>
                 <li>
-                    <Link to="/employee">Employés</Link>
+                    <Link to="/transfers">Transferts</Link>
+                </li> 
+                <li>
+                    <Link to="/productStock">Stock de produit</Link>
+                </li>
+                <li>
+                    <Link to="/sale">Ventes</Link>
+                </li>
+                <li>
+                    <Link to={"/account"}>Compte</Link>
                 </li>
                 <li>
                     <button onClick={handleLogout}>Se déconnecter</button>

@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,  InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Stack, TextField } from "@mui/material";
-import { CategoryJoinProductType, ProductJoinProductType, ProductTypeJoinProductTypeAttribute, AllProductData, ProductAttribute, ProductJoinProductAttribute, Attribute } from "../../../Hooks/types";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { CategoryJoinProductType, ProductJoinProductType, ProductTypeJoinProductTypeAttribute, AllProductData, ProductAttribute, ProductJoinProductAttribute, Attribute, ProductStockPosted, PointOfSale } from "../../../Hooks/types";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import InputField from "../../../Components/Common/Input";
 import axiosInstance from "../../../axiosInstance";
 import { transformCategoryArray } from "../../../Hooks/useGroupData";
@@ -15,7 +15,7 @@ interface AddProductProps {
     setProductDataList: Dispatch<SetStateAction<AllProductData[]>>;
 }
 
-const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, handleClose, productDataList, setProductDataList }) => {
+const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, handleClose, productDataList }) => {
     const [selectedProductType, setSelectedProductType] = useState<ProductTypeJoinProductTypeAttribute | null>(null)
     const [selectedProductTypeId, setSelectedProductTypeId] = useState<number | "">("");
 
@@ -36,6 +36,13 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
         resetForm();
         handleClose();
     }
+
+    useEffect(() => {
+        if(categoryDataList){
+            console.log("cateogryDataList",categoryDataList);
+            
+        }
+    }, [categoryDataList])
 
     const [productAttributes, setProductAttributes] = useState<Attribute[]>([]);
 
@@ -97,8 +104,32 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                 
                 console.log(productAttributes);
                 try{
+                    const addedproduct: ProductJoinProductAttribute = productResponse.data;
                     productAttributesResponse =  await axiosInstance.post("/attributes", productAttributes)
                     console.log("productAttributesResponse : ", productAttributesResponse)
+
+                    const getPointOfSales = await axiosInstance.get("/pointOfSales")
+                    const newPStockList : ProductStockPosted[] = [];
+                    getPointOfSales.data.map((pos: PointOfSale) => {
+                        const newPStock: ProductStockPosted = {
+                            quantityStock: 0,
+                            product: addedproduct,
+                            pointOfSale: pos
+                        }
+
+                        newPStockList.push(newPStock);
+                    })
+
+                    newPStockList.push({
+                        quantityStock: 0,
+                        product: addedproduct,
+                        pointOfSale: null
+                    })
+
+                    const addStockResponse = await axiosInstance.post("/productStocks", newPStockList);
+                    console.log("addStockResponse : ", addStockResponse);
+                    
+
                 } catch(error){
                     await axiosInstance.delete('/product', productResponse.data);
                     enqueueSnackbar(`Echec de l'ajout du produit : ${error}`, {variant: "error"})
@@ -118,7 +149,6 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                     pr.attributes.push(attribute);
                 })
 
-                //const pDataList = [...productDataList];
                 
                 productDataList.map((category) => {
                     category.productTypes.map((productType ) => {
@@ -128,7 +158,11 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                     })
                     
                 })
-                //setProductDataList(pDataList);
+
+                console.log("productDataList",productDataList);
+                
+
+                
                 enqueueSnackbar("Le produit a été ajouté avec succès", {variant: "success"});
                 resetForm();
                 handleClose();

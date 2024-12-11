@@ -19,13 +19,15 @@ const DeleteProductDialog : React.FC<DeleteProductDialogProps> = ({open, handleC
     const handleDeleteProduct = async () => {
         try {
             await axiosInstance.delete('/product',  {data : selectedProduct});
-            await axiosInstance.delete('/productAttributes', {data: selectedProduct?.attributes})
 
             productDataList.forEach(category => {
                 category.productTypes.forEach(productType => {
                 productType.products = productType.products.filter(product => product.idProduct !== selectedProduct?.idProduct);
                 });
             });
+
+            await axiosInstance.delete(`/attributes/${selectedProduct?.idProduct}`, {params: {parent: "product"}})
+
             enqueueSnackbar("Le produit a été supprimé avec succès.", {variant: "success"});
             handleClose();
         } catch(error){

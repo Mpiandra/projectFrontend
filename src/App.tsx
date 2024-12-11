@@ -8,6 +8,10 @@ import CategoryList from "./pages/Employes/categoryAndProductType/categoryList.t
 import PointOfSaleList from "./pages/Employes/pointOfSale/pointOfSaleList.tsx";
 import EmployeeList from "./pages/Employes/employeeManagement/employeeList.tsx";
 import { SnackbarProvider } from "notistack";
+import TransferList from "./pages/Employes/transfer/transferList.tsx";
+import ProductStockList from "./pages/Employes/productStock/productStockList.tsx";
+import SaleList from "./pages/Employes/sale/saleList.tsx";
+import Account from "./pages/Employes/account/seeAccount.tsx";
 
 function App() {
 
@@ -29,6 +33,10 @@ function App() {
                   <Route path="/categoryList" element={<ProtectedRoute><CategoryList/></ProtectedRoute>} />
                   <Route path="/pointOfSale" element={<ProtectedRoute><PointOfSaleList /></ProtectedRoute>} />
                   <Route path="/employee" element={<ProtectedRoute><EmployeeList /></ProtectedRoute>} />
+                  <Route path="/transfers" element={<ProtectedRoute><TransferList/></ProtectedRoute>}/>
+                  <Route path="/productStock" element={<ProtectedRoute><ProductStockList /></ProtectedRoute>} />
+                  <Route path="/sale" element={<ProtectedRoute><SaleList /></ProtectedRoute>} />
+                  <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
               </Routes>
         </Router>
     </SnackbarProvider>

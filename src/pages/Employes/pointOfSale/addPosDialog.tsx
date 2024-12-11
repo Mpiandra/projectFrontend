@@ -3,7 +3,7 @@ import InputField from "../../../Components/Common/Input";
 import { useState } from "react";
 import axiosInstance from "../../../axiosInstance";
 import { useSnackbar } from "notistack";
-import { PointOfSale } from "../../../Hooks/types";
+import { PointOfSale, ProductStockPosted } from "../../../Hooks/types";
 
 interface AddPosDialogProps {
     open: boolean;
@@ -37,6 +37,30 @@ const AddPosDialog: React.FC<AddPosDialogProps> = ({open, handleClose, pointOfSa
             if(posName !== "" && address !== ""){
                 const addPosResponse = await axiosInstance.post('pointOfSale', newPos);
                 console.log(addPosResponse);
+
+                const getPos = await axiosInstance.get("/pointOfSales")
+                
+                const posList: PointOfSale[] = getPos.data;
+
+                const stocksResponse = await axiosInstance.get(`/productStocks/${posList[0].idPointOfSale}`)
+
+                const stockList: ProductStockPosted[] = stocksResponse.data;
+
+                stockList.map((stock: ProductStockPosted) => {
+                    delete stock.idStock;
+                    stock.quantityStock = 0
+                    stock.pointOfSale=addPosResponse.data
+                })
+
+                console.log(stockList);
+                
+
+                const addStock = await axiosInstance.post("/productStocks", stockList);
+                console.log((addStock));
+                
+
+
+
                 const posToAdd: PointOfSale = {
                     idPointOfSale: addPosResponse.data.idPoitOfsale,
                     pointOfSaleName: addPosResponse.data.pointOfSaleName,

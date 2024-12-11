@@ -30,7 +30,7 @@ const DeletePosDialog: React.FC<DeletePosDialogProps>= ({open, handleClose, sele
 
             handleClose();
        }catch(error){
-            enqueueSnackbar(`Echec de la suppression du point de vente : ${error}`)
+            enqueueSnackbar(`Echec de la suppression du point de vente : ${error}`, {variant: "error"})
        }
 
     }

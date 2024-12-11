@@ -5,6 +5,7 @@ import { Employee, Permissions, PointOfSale } from "../../../Hooks/types";
 import InputField from "../../../Components/Common/Input";
 import { useSnackbar } from "notistack";
 import { AxiosResponse } from "axios";
+import { transformToEmployee } from "../../../Hooks/useGroupData";
 
 interface AddEmployeeProps {
     open: boolean;
@@ -115,19 +116,22 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
             console.log(checkState);
             
             if(nameEmployee !== "" && mailEmployee !== "" && selectedPos!== null && selectedPos !== undefined ){
-                    const newEmployee:Employee = {
+                console.log("checkState: ", checkState);
+                
+                    const newEmployee = {
                         nameEmployee: nameEmployee,
                         mailEmployee: mailEmployee,
                         password:"hhhhh",
                         pointOfSale: selectedPos,
-                        permissions: checkState
+                        ...checkState
                     }
 
                     console.log("newEMployee : ", newEmployee);
                     
                     addEmployeeResponse = await axiosInstance.post('/employee', newEmployee);
+                    const toPushEmployee = transformToEmployee(addEmployeeResponse?.data);
                     if(addEmployeeResponse !== null){
-                        employeeList.push(addEmployeeResponse.data);
+                        employeeList.push(toPushEmployee);
                     }
                     
                     console.log(addEmployeeResponse);
@@ -138,15 +142,20 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
             } else if(nameEmployee !== "" && mailEmployee !== "" && selectedPos === undefined ){
                     console.log("pos is null");
                     
-                    const newEmployee:Employee = {
+                    const newEmployee = {
                         nameEmployee: nameEmployee,
                         mailEmployee: mailEmployee,
                         password: "hhhhh",
-                        permissions: checkState
+                        ...checkState
                     }
+                    console.log("newEMployee: ", newEmployee);
+
+                    
                     addEmployeeResponse = await axiosInstance.post('/employee', newEmployee);
+
+                    const toPushEmployee = transformToEmployee(addEmployeeResponse?.data);
                     if(addEmployeeResponse !== null){
-                        employeeList.push(addEmployeeResponse.data);
+                        employeeList.push(toPushEmployee);
                     }
                     console.log(addEmployeeResponse);
                     enqueueSnackbar("Employé ajouté avec succès", {variant: "success"});

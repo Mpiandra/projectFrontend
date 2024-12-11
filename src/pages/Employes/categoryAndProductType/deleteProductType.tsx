@@ -14,9 +14,11 @@ interface DeleteProductTypeProps{
 const DeleteProductType: React.FC<DeleteProductTypeProps> = ({open, handleClose, idProductType, categoryDataList, setCategoryDataList}) => {
     const { enqueueSnackbar } = useSnackbar();
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         try{
-            axiosInstance.delete(`/productType/${idProductType}`);
+            await axiosInstance.delete(`/productType/${idProductType}`);
+            
+            await axiosInstance.delete(`/attributes/${idProductType}`, {params: {parent: "productType"}})
 
             const filteredCategoryDataList = categoryDataList.map(category => {
                 return {

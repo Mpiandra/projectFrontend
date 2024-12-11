@@ -1,8 +1,10 @@
+import {useNavigate} from "react-router-dom";
+import React from "react";
+import {Toolbar, Divider, List, ListItem, ListItemButton, Button, ListItemText} from "@mui/material";
 
-import {Link, useNavigate} from "react-router-dom";
+import { LogoutSharp } from "@mui/icons-material";
 
-
-const MenuEmployee : React.FC = () => {
+const MenuEmployee: React.FC = () => {
 
     const navigate = useNavigate();
 
@@ -11,38 +13,50 @@ const MenuEmployee : React.FC = () => {
         navigate('/login');
     }
 
+    const arrayLink = [
+        {
+            link: "/employeeHome",
+            label: "Produits"
+        },
+        {
+            link: "/categoryList",
+            label: "Categories"
+        },
+        {
+            link: "/pointOfSale",
+            label: "Points de vente"
+        },
+        {
+            link: "/employee",
+            label: "Employés"
+        }
+    ];
+
+
     return (
-        <nav>
-            <ul>
-                <li>
-                    <Link to="/employeeHome">Produits</Link>
-                </li>
-                <li>
-                    <Link to="/categoryList">Categories</Link>
-                </li>
-                <li>
-                    <Link to="/pointOfSale">Points de vente</Link>
-                </li>
-                <li>
-                    <Link to="/employee">Employés</Link>
-                </li>
-                <li>
-                    <Link to="/transfers">Transferts</Link>
-                </li> 
-                <li>
-                    <Link to="/productStock">Stock de produit</Link>
-                </li>
-                <li>
-                    <Link to="/sale">Ventes</Link>
-                </li>
-                <li>
-                    <Link to={"/account"}>Compte</Link>
-                </li>
-                <li>
-                    <button onClick={handleLogout}>Se déconnecter</button>
-                </li>
-            </ul>
-        </nav>
+        <>
+            <Toolbar/>
+            <Divider/>
+            <List>
+                {arrayLink.map((item) => {
+                    return (
+                        <ListItem key={item.link}>
+                            <ListItemButton slot="link" to={item.link}>
+                                <ListItemText primary={item.label} />
+                            </ListItemButton>
+                        </ListItem>
+                    )
+                })}
+            </List>
+            <Divider />
+            <List>
+                <ListItem>
+                    <Button onClick={handleLogout} variant="outlined" endIcon={<LogoutSharp/>}>
+                        Se déconnecter
+                    </Button>
+                </ListItem>
+            </List>
+        </>
     )
 }
 export default MenuEmployee

@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import MenuEmployee from "../../../Components/Employes/menuEmployee";
+import { Button, Divider, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { AddSharp } from "@mui/icons-material";
 import { useState } from "react";
 import AddToStockDialog from "./addToStockDialog";
 import { CategoryWithStock, Employee } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import { groupStockProducts } from "../../../Hooks/useGroupData";
+import { colors } from "../../../Colors";
 
 const ProductStockList = () => {
 
@@ -55,43 +55,45 @@ const ProductStockList = () => {
 
     return (
         <div>
-            <MenuEmployee />
             <AddToStockDialog open={openAddToStock}
                                 handleClose={handleCloseAddToStock}
                                 productStockData={productStockData} />
 
-            <h2>Stock principal</h2>
+            <Typography variant="h3" align="center">Stock</Typography>
             <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handleOpenAddToStock}>Stock</Button>
             {productStockData.map((category) => {
                 return (
                     <React.Fragment key={category.idCategory}>
-                        <Typography>{category.categoryName}</Typography>
-                        {category.productTypes.map((productType) => {
-                            return (
-                                <React.Fragment key={productType.idProductType}>
-                                    <Typography>{productType.productTypeName}</Typography>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Produit</TableCell>
-                                                <TableCell>Quantité en stock</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {productType.products.map((product) => {
-                                                return (
-                                                    <TableRow key={product.idProduct}>
-                                                        <TableCell>{product.productName}</TableCell>
-                                                        <TableCell>{product.quantityStock}</TableCell>
-                                                    </TableRow>
-                                                )
-                                            })}
-                                        </TableBody>
-                                    </Table>
-                                    
-                                </React.Fragment>
-                            )
-                        })}
+                        <Typography variant={"h4"} align="center" sx={{color: colors.neutral}}>{category.categoryName}</Typography>
+                        <Paper elevation={5}>
+                            {category.productTypes.map((productType) => {
+                                return (
+                                    <React.Fragment key={productType.idProductType}>
+                                        <Typography variant="h5" align="center">{productType.productTypeName}</Typography>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell align="center">Produit</TableCell>
+                                                    <TableCell align="center">Quantité en stock</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {productType.products.map((product) => {
+                                                    return (
+                                                        <TableRow key={product.idProduct}>
+                                                            <TableCell align="center">{product.productName}</TableCell>
+                                                            <TableCell align="center">{product.quantityStock}</TableCell>
+                                                        </TableRow>
+                                                    )
+                                                })}
+                                            </TableBody>
+                                        </Table>
+                                        <Divider />
+                                        
+                                    </React.Fragment>
+                                )
+                            })}
+                        </Paper>
                     </React.Fragment>
                     
                 )

@@ -2,8 +2,7 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import MenuEmployee from '../../../Components/Employes/menuEmployee';
-import { Button, Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Button, Divider, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { AddSharp} from '@mui/icons-material';
 import AddTransferDialog from './addTransfer';
 import axiosInstance from '../../../axiosInstance';
@@ -133,7 +132,6 @@ const TransferList = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <MenuEmployee />
 
         <AddTransferDialog open={openAddTransfer}
                             handleClose={handleCloseAddTransfer} 
@@ -160,78 +158,82 @@ const TransferList = () => {
 
             {/* //Entrant */}
             <Grid size={5}>
-                  <Typography>Entrant</Typography>
+                  <Typography variant='h5' align='center'>Entrant</Typography>
                     {inProgressTransferIn.length>0 ? 
                     inProgressTransferIn.map((transfer, index) => {
                       return (
                         <React.Fragment key={index}>
-                          <Typography>Date : {formatDate(transfer.transferDate)}</Typography>
-                          <Typography>Point de vente déstination : {transfer.pointOfSaleDestination.pointOfSaleName}</Typography>
-                          <Table>
-                            <TableHead>
-                              <TableRow>
-                                <TableCell>Produit</TableCell>
-                                <TableCell>Quantité</TableCell>
-                                <TableCell>Prix</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {transfer.transferRows.map((transferRow, indexRow) => {
-                                  return (
-                                    <TableRow key={`${transferRow.idTransferRow}-${indexRow}-${index}`}>
-                                      <TableCell>{transferRow.product.productName}</TableCell>
-                                      <TableCell>{transferRow.quantityProductTransfer}</TableCell>
-                                      <TableCell>{transferRow.product.price * transferRow.quantityProductTransfer}</TableCell>
-                                    </TableRow>
-                                  )
-                              })}
-                            </TableBody>
-                          </Table>
-                          <Button variant='outlined' size='small' onClick={() => handleOpenConfirmTransfer(transfer)}>Confirmer</Button>
+                          <Paper elevation={5}>
+                            <Typography>Date : {formatDate(transfer.transferDate)}</Typography>
+                            <Typography>Point de vente déstination : {transfer.pointOfSaleDestination.pointOfSaleName}</Typography>
+                            <Table>
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>Produit</TableCell>
+                                  <TableCell>Quantité</TableCell>
+                                  <TableCell>Prix</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {transfer.transferRows.map((transferRow, indexRow) => {
+                                    return (
+                                      <TableRow key={`${transferRow.idTransferRow}-${indexRow}-${index}`}>
+                                        <TableCell>{transferRow.product.productName}</TableCell>
+                                        <TableCell>{transferRow.quantityProductTransfer}</TableCell>
+                                        <TableCell>{transferRow.product.price * transferRow.quantityProductTransfer}</TableCell>
+                                      </TableRow>
+                                    )
+                                })}
+                              </TableBody>
+                            </Table>
+                            <Button variant='outlined' size='small' onClick={() => handleOpenConfirmTransfer(transfer)}>Confirmer</Button>
+                          </Paper>
                         </React.Fragment>
                       )
                     })
                     
-                    : <Typography>Pas de transfert enregistré</Typography>}
+                    : <Typography align='center'>Pas de transfert enregistré</Typography>}
                 </Grid>
 
             <Divider orientation='vertical' flexItem />
 
             {/* //Sortant */}
             <Grid size={6}>
-            <Typography>Sortant</Typography>
+            <Typography variant='h5' align='center'>Sortant</Typography>
               {inProgressTransferOut.length>0 ? 
               inProgressTransferOut.map((transfer, index) => {
                 return (
                   <React.Fragment key={index}>
+                            <Paper elevation={5}>
                             <Typography>Date : {formatDate(transfer.transferDate)}</Typography>
                             <Typography>Point de vente déstination : {transfer.pointOfSaleDestination.pointOfSaleName}</Typography>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Produit</TableCell>
-                          <TableCell>Quantité</TableCell>
-                          <TableCell>Prix</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {transfer.transferRows.map((transferRow, indexRow) => {
-                            return (
-                              <TableRow key={`${transferRow.idTransferRow}-${indexRow}-${index}`}>
-                                <TableCell>{transferRow.product.productName}</TableCell>
-                                <TableCell>{transferRow.quantityProductTransfer}</TableCell>
-                                <TableCell>{transferRow.product.price * transferRow.quantityProductTransfer}</TableCell>
-                              </TableRow>
-                            )
-                        })}
-                      </TableBody>
-                    </Table>
+                                <Table>
+                                  <TableHead>
+                                    <TableRow>
+                                      <TableCell>Produit</TableCell>
+                                      <TableCell>Quantité</TableCell>
+                                      <TableCell>Prix</TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {transfer.transferRows.map((transferRow, indexRow) => {
+                                        return (
+                                          <TableRow key={`${transferRow.idTransferRow}-${indexRow}-${index}`}>
+                                            <TableCell>{transferRow.product.productName}</TableCell>
+                                            <TableCell>{transferRow.quantityProductTransfer}</TableCell>
+                                            <TableCell>{transferRow.product.price * transferRow.quantityProductTransfer}</TableCell>
+                                          </TableRow>
+                                        )
+                                    })}
+                                  </TableBody>
+                                </Table>
+                            </Paper>
                     
                   </React.Fragment>
                 )
               })
               
-              : <Typography>Pas de transfert enregistré</Typography>}
+              : <Typography align='center'>Pas de transfert enregistré</Typography>}
             </Grid>
         </Grid>
       </CustomTabPanel>
@@ -243,11 +245,12 @@ const TransferList = () => {
 
               {/* //Entrant */}
             <Grid size={5}>
-                  <Typography>Entrant</Typography>
+                  <Typography variant='h5' align='center'>Entrant</Typography>
                     {completedTransferIn.length>0 ? 
                     completedTransferIn.map((transfer, index) => {
                       return (
                         <React.Fragment key={index}>
+                          <Paper elevation={5}>
                           <Typography>Date : {formatDate(transfer.transferDate)}</Typography>
                           <Typography>Point de vente déstination : {transfer.pointOfSaleDestination.pointOfSaleName}</Typography>
                           <Table>
@@ -270,11 +273,12 @@ const TransferList = () => {
                               })}
                             </TableBody>
                           </Table>
+                          </Paper>
                         </React.Fragment>
                       )
                     })
                     
-                    : <Typography>Pas de transfert enregistré</Typography>}
+                    : <Typography align='center'>Pas de transfert enregistré</Typography>}
                 </Grid>
 
 
@@ -282,7 +286,7 @@ const TransferList = () => {
 
             {/* //Sortant */}
             <Grid size={6}>
-            <Typography>Sortant</Typography>
+            <Typography variant='h5' align='center'>Sortant</Typography>
               {completedTransferOut.length>0 ? 
               completedTransferOut.map((transfer, index) => {
                 return (
@@ -313,7 +317,7 @@ const TransferList = () => {
                 )
               })
               
-              : <Typography>Pas de transfert enregistré</Typography>}
+              : <Typography align='center'>Pas de transfert enregistré</Typography>}
             </Grid>
         </Grid>
       </CustomTabPanel>

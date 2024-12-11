@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../axiosInstance.ts";
 import {Button, ButtonGroup, IconButton, Stack} from "@mui/material";
-import MenuEmployee from "../../../Components/Employes/menuEmployee.tsx";
 import {AddSharp, DeleteSharp, EditSharp} from "@mui/icons-material";
 import EditCategoryDialog from "./editCategory.tsx";
 import DeleteCategoryDialog from "./deleteCategory.tsx";
@@ -93,8 +92,7 @@ const CategoryList: React.FC = () => {
     }, []);
 
     return (
-        <SnackbarProvider>
-            <MenuEmployee />
+        <SnackbarProvider>  
             <Button variant="outlined" size="small" onClick={handleOpenAddCategory} startIcon={<AddSharp />}>Catégorie</Button>
             <EditCategoryDialog open={openEditCategoryDialog}
                                 handleClose={handleCloseCategoryEdit}

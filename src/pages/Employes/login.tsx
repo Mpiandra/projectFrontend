@@ -3,8 +3,9 @@ import InputField from "../../Components/Common/Input.tsx";
 import {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../axiosInstance.ts";
 import {useNavigate} from "react-router-dom";
-import {Button, Stack} from "@mui/material";
+import {Button, Container, Stack} from "@mui/material";
 import { useSnackbar } from "notistack";
+import Typography from "@mui/material/Typography";
 
 const Login: React.FC = () => {
     const[mailEmployee, setMailEmployee] : [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
@@ -41,44 +42,40 @@ const Login: React.FC = () => {
             direction="column"
             spacing={2}
             sx={{
+                display:"flex",
                 justifyContent: "center",
                 alignItems: "center",
-                border : "1px solid gray",
                 borderRadius : 1,
-                width : 300,
-                height : 200,
+                height : "100%",
+                width:"100%",
+                mt:"10rem"
 
             }}
         >
-                <div>
+            <Container maxWidth="md"  sx={{bgcolor:"whitesmoke",height:"30rem",borderRadius:5,display:"flex",flexDirection:"column", justifyContent: "center",
+                alignItems: "center",}}>
+                <Typography variant="h3" color="secondary" sx={{fontWeight:800,marginBottom:4}}>Connexion</Typography>
+
                     <InputField type="email"
                            name="emailEmployee"
-                           label="Mail"
+                           label="E-mail"
                            id="outlined-basic"
                            value={mailEmployee ?? ""}
                            onChange={setMailEmployee}
                            required
 
                     />
-                </div>
-                <div>
+
                     <InputField type="password"
                            name="password"
-                           label="Password"
+                           label="Mot de passe"
                            id="outlined-password-input"
                            value={password ?? ""}
                            onChange={setPassword}
                            required
                     />
-                </div>
-            <Stack
-                direction="row"
-                spacing={2}
-            >
-                <Button variant="outlined" size="small" onClick={handleSubmit}>Se connecter</Button>
-                <Button variant="outlined" size="small" onClick={() => navigate("/")}>Annuler</Button>
-            </Stack>
-
+                <Button variant="contained" color="secondary" sx={{width:"50%"}} size="small"   onClick={handleSubmit}>Se connecter</Button>
+            </Container>
 
         </Stack>
 

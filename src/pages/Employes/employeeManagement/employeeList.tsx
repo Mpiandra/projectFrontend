@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MenuEmployee from "../../../Components/Employes/menuEmployee";
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Stack, Typography } from "@mui/material";
 import { AddSharp, DeleteSharp, EditSharp } from "@mui/icons-material";
 import AddEmployeeDialog from "./addEmployeeDialog";
 import { SnackbarProvider } from "notistack";
@@ -103,7 +102,6 @@ const EmployeeList: React.FC = () => {
 
     return (
         <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
-            <MenuEmployee />
             <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handleOpenAddEmployee}>
                 Ajouter
             </Button>
@@ -126,24 +124,27 @@ const EmployeeList: React.FC = () => {
             <div>
                 {employeeList.map((employee) => (
 
-                    <Card key={employee.idEmployee}>
-                        <CardHeader
-                                    title={employee.nameEmployee}
-                                    subheader={employee.mailEmployee}
-                        />
-                        <CardContent><Typography>Point de vente : {employee.pointOfSale?.pointOfSaleName || "Aucun"}</Typography></CardContent>
-                        <CardContent><Typography>Permissions :</Typography>
-                                <ul>
-                                    {formatPermissions(employee.permissions).map((permission, index) => (
-                                    <li key={index}>{permission}</li>
-                                ))}
-                                </ul>
-                            </CardContent>
-                        <CardActions>
-                            <IconButton onClick={() => handleOpenEditEmployee(employee)}><EditSharp /></IconButton>
-                            <IconButton onClick={() => handleOpenDeleteEmployee(employee)}><DeleteSharp /></IconButton>
-                        </CardActions>
-                    </Card>
+                    <Stack direction={"column"} spacing={3}>
+                        <Card key={employee.idEmployee} elevation={5}>
+                            <CardHeader
+                                        title={<Typography align="center" variant="h4">{employee.nameEmployee}</Typography>}
+                                        subheader={<Typography align="center" variant="h6">{employee.mailEmployee}</Typography>}
+                                        
+                            />
+                            <CardContent><Typography >Point de vente : {employee.pointOfSale?.pointOfSaleName || "Aucun"}</Typography></CardContent>
+                            <CardContent><Typography>Permissions :</Typography>
+                                    <ul>
+                                        {formatPermissions(employee.permissions).map((permission, index) => (
+                                        <li key={index}>{permission}</li>
+                                    ))}
+                                    </ul>
+                                </CardContent>
+                            <CardActions>
+                                <IconButton onClick={() => handleOpenEditEmployee(employee)}><EditSharp /></IconButton>
+                                <IconButton onClick={() => handleOpenDeleteEmployee(employee)}><DeleteSharp /></IconButton>
+                            </CardActions>
+                        </Card>
+                    </Stack>
 
                     
                 ))}

@@ -1,5 +1,4 @@
 import { Button, ButtonGroup, CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import MenuEmployee from "../../../Components/Employes/menuEmployee";
 import { AddSharp, DeleteSharp, EditSharp } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import AddPosDialog from "./addPosDialog";
@@ -77,7 +76,6 @@ const PointOfSaleList = () => {
                                     vertical: 'top',
                                     horizontal: 'right'
                                 }}>
-                <MenuEmployee />
                 <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handelOpenAddPosDialog}>Point de vente</Button>
 
                 <AddPosDialog open={openAddPosDialog}

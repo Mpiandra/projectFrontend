@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import MenuEmployee from "../../../Components/Employes/menuEmployee";
-import { Button,  Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Button,  Paper,  Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { AddSharp} from "@mui/icons-material";
 import AddSaleDialog from "./addSale";
 import axiosInstance from "../../../axiosInstance";
@@ -81,8 +80,6 @@ const SaleList: React.FC = () => {
     }
 
     return <div>
-        <MenuEmployee/>
-
         <AddSaleDialog open={openAddSale}
                         handleClose={handleCloseAddSale}
                         filteredSaleData={filteredSaleData} />
@@ -95,9 +92,11 @@ const SaleList: React.FC = () => {
                          minDate={dayjs(minDate)}/>
         </LocalizationProvider>
 
+        
         <Stack direction={"column"} spacing={2}>
             {filteredSaleData?.map((sale) => {
                 return (
+                    <Paper elevation={5}>
                     <Table key={sale.idSale}>
                     <TableHead>
                         <TableRow>
@@ -125,9 +124,11 @@ const SaleList: React.FC = () => {
                         </TableRow>
                     </TableBody>
                 </Table>
+                </Paper>
                 )
             })}
         </Stack>
+        
     </div>
 }
 

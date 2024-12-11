@@ -8,39 +8,56 @@ import CategoryList from "./pages/Employes/categoryAndProductType/categoryList.t
 import PointOfSaleList from "./pages/Employes/pointOfSale/pointOfSaleList.tsx";
 import EmployeeList from "./pages/Employes/employeeManagement/employeeList.tsx";
 import { SnackbarProvider } from "notistack";
+import AppLayout from "./Components/layout/layout.tsx";
+import {createTheme, ThemeProvider} from "@mui/material";
 import TransferList from "./pages/Employes/transfer/transferList.tsx";
-import ProductStockList from "./pages/Employes/productStock/productStockList.tsx";
 import SaleList from "./pages/Employes/sale/saleList.tsx";
-import Account from "./pages/Employes/account/seeAccount.tsx";
+import ProductStockList from "./pages/Employes/productStock/productStockList.tsx";
 
 function App() {
 
+    const theme = createTheme({
+        palette: {
+            primary:{
+                main:"#627264"
+            },
+            secondary:{
+                main:"#a1cda8"
+            },
+            background:{
+                default:"#c5e7e2"
+            }
+        }
+    });
+
   return (
     <>
-    <SnackbarProvider maxSnack={5}
-                      anchorOrigin={
-                        {
-                          vertical: "top",
-                          horizontal: "right"
-                        }
-                      }>
-      <Router>
-              <Routes>
-                  <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/" element={<ProductList/>} />
-                  <Route path="/employeeHome" element={<ProtectedRoute><ProductsList /></ProtectedRoute>} />
-                  <Route path="/categoryList" element={<ProtectedRoute><CategoryList/></ProtectedRoute>} />
-                  <Route path="/pointOfSale" element={<ProtectedRoute><PointOfSaleList /></ProtectedRoute>} />
-                  <Route path="/employee" element={<ProtectedRoute><EmployeeList /></ProtectedRoute>} />
-                  <Route path="/transfers" element={<ProtectedRoute><TransferList/></ProtectedRoute>}/>
-                  <Route path="/productStock" element={<ProtectedRoute><ProductStockList /></ProtectedRoute>} />
-                  <Route path="/sale" element={<ProtectedRoute><SaleList /></ProtectedRoute>} />
-                  <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-              </Routes>
-        </Router>
-    </SnackbarProvider>
-        
+    <ThemeProvider theme={theme}>
+            <Router>
+                <SnackbarProvider maxSnack={5}
+                                  anchorOrigin={
+                                    {
+                                      vertical: "top",
+                                      horizontal: "right"
+                                    }
+                                  }>
+                    <AppLayout>
+                          <Routes>
+                              <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
+                              <Route path="/login" element={<Login />} />
+                              <Route path="/" element={<ProductList/>} />
+                              <Route path="/produits" element={<ProductsList />} />
+                              <Route path="/categories" element={<CategoryList/>} />
+                              <Route path="/pointOfSale" element={<PointOfSaleList />} />
+                              <Route path="/employee" element={<EmployeeList />} />
+                              <Route path="/transfer" element={<TransferList />} />
+                              <Route path="/sale" element={<SaleList />} />
+                              <Route path="/productStock" element={<ProductStockList />} />
+                          </Routes>
+                    </AppLayout>
+                </SnackbarProvider>
+            </Router>
+    </ThemeProvider>
     </>
 
   )

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../axiosInstance.ts";
-import {Button, ButtonGroup, IconButton, Stack} from "@mui/material";
-import {AddSharp, DeleteSharp, EditSharp} from "@mui/icons-material";
+import {ButtonGroup, Fab, IconButton, Paper, Stack, TableBody, Table, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
+import {Add, AddSharp, DeleteSharp, EditSharp} from "@mui/icons-material";
 import EditCategoryDialog from "./editCategory.tsx";
 import DeleteCategoryDialog from "./deleteCategory.tsx";
 import AddCategoryDialog from "./addCategoryDialog.tsx";
@@ -10,6 +10,7 @@ import { CategoryJoinProductType, ProductTypeJoinProductTypeAttribute } from "..
 import { groupData} from "../../../Hooks/useGroupData.ts";
 import { SnackbarProvider } from "notistack";
 import DeleteProductType from "./deleteProductType.tsx";
+import { colors } from "../../../Colors/index.ts";
 
 // Types
 
@@ -93,7 +94,9 @@ const CategoryList: React.FC = () => {
 
     return (
         <SnackbarProvider>  
-            <Button variant="outlined" size="small" onClick={handleOpenAddCategory} startIcon={<AddSharp />}>Catégorie</Button>
+            <Fab onClick={handleOpenAddCategory} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                    <Add />
+                </Fab>
             <EditCategoryDialog open={openEditCategoryDialog}
                                 handleClose={handleCloseCategoryEdit}
                                 idCategory={selectedCategory?.idCategory}
@@ -125,6 +128,7 @@ const CategoryList: React.FC = () => {
                                 categoryDataList={categoryDataList}
                                 setCategoryDataList={setCategoryDataList} />
 
+            <Stack spacing={5}>
             {categoryDataList.map((category, index) => {
                 return (
                     <div key={index}>
@@ -133,38 +137,52 @@ const CategoryList: React.FC = () => {
                             justifyContent={"space-between"}
                             alignItems={"center"}
                         >
-                            <h2>{category.categoryName}</h2>
+                            <Typography variant="h4" align="center" sx={{color: colors.primary}}>{category.categoryName}</Typography>
                             <ButtonGroup variant={"text"}>
-                                <Button startIcon={<EditSharp />} size={"small"} onClick={() => handleOpenCategoryEdit(category)}>Modifier</Button>
-                                <Button startIcon={<DeleteSharp />} size={"small"} onClick={() => handleOpenCategoryDelete(category)}>Supprimer</Button>
+                                <IconButton onClick={() => handleOpenCategoryEdit(category)}>{<EditSharp />}</IconButton>
+                                <IconButton onClick={() => handleOpenCategoryDelete(category)}>{<DeleteSharp />}</IconButton>
+                                <IconButton onClick={() => handleOpenAddProductType(category)}><AddSharp /></IconButton>
                             </ButtonGroup>
-                            <Button variant={"outlined"} size={"small"} startIcon={<AddSharp />} onClick={() => handleOpenAddProductType(category)}>Type</Button>
                         </Stack>
-                        {category.productTypes.map((productType, index) => {
-                            return(
-                                <ul key={index}>
-                                    <li key={productType.idProductType}>
-                                        <Stack direction={"row"}
-                                                justifyContent={"space-between"}
-                                                alignItems={"center"}>
-                                                    {productType.productTypeName}
-                                                    <IconButton onClick={() => handleOpenDeleteProductType(productType)}><DeleteSharp/></IconButton>
-                                        </Stack>
-                                    </li>
-                                    {productType.attributes.map((attribute, index) => {
-                                        return(
-                                            <ul key={index}>
-                                                <li key={attribute.attributeId}>{attribute.attributeName}</li>
-                                            </ul>
-                                        )
-                                    })}
-                                </ul>
-                            )
-                        })}
+                        {category.productTypes.length > 0 ? 
+                        <TableContainer component={Paper} sx={{background: colors.background}}>
+                        <Table>
+                            <TableHead>
+                                <TableRow sx={{background: colors.secondary}}>
+                                    <TableCell><Typography variant="h6" sx={{color: colors.neutral}}>Type de produit</Typography></TableCell>
+                                    <TableCell><Typography variant="h6" sx={{color: colors.neutral}}>Attribut</Typography></TableCell>
+                                    <TableCell><Typography variant="h6" sx={{color: colors.neutral}}>Options</Typography></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {category.productTypes.map((productType) => {
+                                    return productType.attributes.map((attribute, attributeIndex) => {
+                                        return (
+                                            <TableRow key={`${productType.idProductType}-${attributeIndex}`}>
+                                                {attributeIndex === 0 && (
+                                                    <TableCell rowSpan={productType.attributes.length}>
+                                                        {productType.productTypeName}
+                                                    </TableCell>
+                                                )}
+                                                <TableCell>{attribute.attributeName}</TableCell>
+                                                {attributeIndex===0 && (
+                                                    <TableCell rowSpan={productType.attributes.length} sx={{justifyContent:"center"}}>
+                                                        <IconButton onClick={() => handleOpenDeleteProductType(productType)}><DeleteSharp /></IconButton>
+                                                    </TableCell>
+                                                )}
+                                            </TableRow>
+                                        );
+                                    });
+                                })}
+                            </TableBody>
+
+                        </Table>
+                    </TableContainer> : null}  
                     </div>
 
                 )
             })}
+            </Stack>
         </SnackbarProvider>
     );
 };  

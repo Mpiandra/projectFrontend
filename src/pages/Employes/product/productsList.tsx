@@ -26,6 +26,7 @@ import DeleteProductDialog from "./deleteProductDialog.tsx";
 import { SnackbarProvider } from "notistack";
 import Grid from "@mui/material/Grid2";
 import { colors } from "../../../Colors/index.ts";
+import { useSearchParams } from "react-router-dom";
 
 const ProductsList: React.FC = () => {
     const [openAddProductDialog, setOpenAddProductDialog] = useState(false);
@@ -37,11 +38,30 @@ const ProductsList: React.FC = () => {
     const [categoryDataList, setCategoryDataList] = useState<CategoryJoinProductType[]>([]);
     const [productDataList, setProductDataList] = useState<AllProductData[]>([]);
 
-    // State pour gérer les onglets par catégorie
     const [tabValues, setTabValues] = useState<{ [key: number]: number }>({});
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    
+    const [searchParams] = useSearchParams();
+
+    const search = searchParams.get("search");
+
+    useEffect(() => {
+        const filteredProducts = productDataList.filter((category) => {
+            return category.categoryName === search || 
+            category.productTypes.filter((productType) => {
+                return productType.productTypeName === search || 
+                productType.products.filter((product) => {
+                    return product.productName === search
+                })
+            })
+        })
+
+        console.log(filteredProducts);
+        
+        
+    },[search])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -123,7 +143,7 @@ const ProductsList: React.FC = () => {
                 setProductDataList={setProductDataList} />
 
             <Grid container spacing={1}>
-                <Fab onClick={handleOpenAddProduct} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral }}>
+                <Fab onClick={handleOpenAddProduct} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
                     <Add />
                 </Fab>
                 <Grid size={12}>
@@ -142,7 +162,7 @@ const ProductsList: React.FC = () => {
                                     }}
                                 >
                                     <Typography variant="h2" align={"center"} sx={{
-                                        color: colors.neutral
+                                        color: colors.primary
                                     }}>
                                         {data.categoryName}
                                     </Typography>
@@ -183,20 +203,29 @@ const ProductsList: React.FC = () => {
                                             {categoryTabValue === ptIndex && (
                                                 <Box sx={{ p: 3 }}>
                                                     <div key={ptIndex}>
-                                                        <Stack direction="row" spacing={2}>
+                                                        <Box
+                                                            sx={{
+                                                                display: "flex",
+                                                                flexWrap: "wrap",
+                                                                gap: 2,
+                                                                maxHeight: "500px",
+                                                                overflowY: "auto",
+                                                                padding: "10px"
+                                                            }}    
+                                                        >
                                                             {productType.products.map((product) => (
                                                                 product.idProduct && (
                                                                     <Card key={product.idProduct}
                                                                         sx={{
-                                                                            width: 300,
+                                                                            width: "200px",
                                                                             borderRadius: "25px",
                                                                         }}
                                                                         elevation={3}>
                                                                         <CardHeader
                                                                             sx={{
                                                                                 textAlign: "center",
-                                                                                minHeight: "70px",
-                                                                                background: "#1F0318",
+                                                                                minHeight: "30px",
+                                                                                background: colors.primary,
                                                                                 color: colors.textDefault
                                                                             }}
                                                                             title={product.productName} />
@@ -207,7 +236,10 @@ const ProductsList: React.FC = () => {
                                                                             alt={product.productName}
                                                                         />
                                                                         <Divider />
-                                                                        <CardContent>
+                                                                        <CardContent sx={{
+                                                                            flexGrow: 1,
+                                                                            overflow: "hidden"
+                                                                        }}>
                                                                             {product.attributes.map((attribute) => (
                                                                                 <p key={attribute.attributeId}>
                                                                                     {attribute.attributeName} : {attribute.attributeValue}
@@ -216,7 +248,8 @@ const ProductsList: React.FC = () => {
                                                                         </CardContent>
                                                                         <CardActions sx={{
                                                                             justifyContent: "space-around",
-                                                                            padding: "10px"
+                                                                            padding: "10px",
+                                                                            height: "30px"
                                                                         }}>
                                                                             {product.price} Ar
                                                                             <div>
@@ -231,7 +264,7 @@ const ProductsList: React.FC = () => {
                                                                         </CardActions>
                                                                     </Card>
                                                                 )
-                                                            ))}</Stack>
+                                                            ))}</Box>
                                                     </div>
                                                 </Box>
                                             )}

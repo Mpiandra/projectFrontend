@@ -1,10 +1,10 @@
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
-import { Button, Dialog, DialogTitle, Stack } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogTitle, Stack, Typography } from "@mui/material";
 import InputField from "../../../Components/Common/Input.tsx";
-import { CancelSharp, SendSharp } from "@mui/icons-material";
 import axiosInstance from "../../../axiosInstance.ts";
 import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors/index.ts";
 
 
 interface EditCategoryDialogProps {
@@ -51,32 +51,35 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = ({ open, handleClo
         <Dialog
             open={open}
             onClose={handleClose}
-            maxWidth="lg"    // Augmenter la taille maximale
-            fullWidth        // Utiliser toute la largeur disponible
+            maxWidth={'lg'}
+            PaperProps={{
+                sx: {
+                    borderRadius: "20px"
+                }
+            }} 
         >
-            <DialogTitle>Modifier une catégorie</DialogTitle>
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Modifier une catégorie</Typography></DialogTitle>
             <Stack
                 direction="column"
                 spacing={2}
-                padding={3}   // Ajouter du padding pour espacer les éléments
+                padding={2}   
             >
                 <InputField
                     type="text"
                     name="categoryName"
                     label="Nom de la catégorie"
+                    id="outlined-basic"
                     value={categoryName}
-                    onChange={setCategoryName}  // Mettre à jour l'état newCategoryName
+                    onChange={setCategoryName}  
                     required
                 />
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    justifyContent="center"
-                >
-                    <Button variant="outlined" startIcon={<SendSharp />} onClick={handleSubmit}>Envoyer</Button>
-                    <Button variant="outlined" startIcon={<CancelSharp />} onClick={handleClose}>Annuler</Button>
-                </Stack>
             </Stack>
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.neutral, borderRadius: "20px"}}>Modifier</Button>
+                    <Button variant="outlined" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button> 
+                </DialogActions>
+                    
+           
         </Dialog>
     );
 };

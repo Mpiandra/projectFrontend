@@ -1,10 +1,11 @@
 import React, {Dispatch, SetStateAction, useState} from "react";
-import {Button, Dialog, DialogActions, DialogTitle, Stack} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogTitle, FormControl, Stack, Typography} from "@mui/material";
 import InputField from "../../../Components/Common/Input.tsx";
 import axiosInstance from "../../../axiosInstance.ts";
 import SelectList from "../../../Components/Common/select.tsx";
 import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors/index.ts";
 
 interface AddProductTypeAndAttributesProps {
     open: boolean;
@@ -113,14 +114,21 @@ const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> =
         <Dialog open={open}
                 onClose={handleClose}
                 maxWidth={'lg'}
-                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }}
         >
             <DialogTitle>
-                Ajouter un type de produit et ses attributs
+                <Typography align="center" variant="h4" sx={{color: colors.neutral}}>
+                Ajouter un type de produit à la catégorie {categoryName}
+                </Typography>
             </DialogTitle>
             <Stack
                 direction="column"
                 spacing={2}
+                margin={2}
             >
                 <InputField type={"text"}
                        name={"productTypeName"}
@@ -139,13 +147,19 @@ const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> =
                             <React.Fragment key={index}>
                                 <Stack
                                     direction="row"
-                                    spacing={6}>
+                                    spacing={2}
+                                    sx={{justifyContent: "space-between",
+                                        width: "100%"
+                                    }}>
+                                    <FormControl fullWidth>
                                     <InputField type="text"
                                            onChange={(e) => handleChangeInput(index, 'attributeName', e)}
                                            name={index + "-name"}
                                            id="outlined-basic"
                                            label="Nom de l'attribut"
                                     />
+                                    </FormControl>
+                                    <FormControl fullWidth>
                                     <SelectList values={types}
                                                 value={item.attributeType}
                                                 onChange={(e) => {
@@ -155,6 +169,7 @@ const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> =
                                                 }}
                                                 label="Type de l'attribut"
                                     />
+                                    </FormControl>
                                 </Stack>
                             </React.Fragment>
                         )
@@ -162,8 +177,8 @@ const AddProductTypeandAttributes : React.FC<AddProductTypeAndAttributesProps> =
                     <Button variant="text" size="small" onClick={handleAddAttribute}>Ajouter un attribut</Button>
                 </Stack>
                 <DialogActions>
-                    <Button variant={"outlined"} size={"small"} onClick={handleSubmit}>Envoyer</Button>
-                    <Button variant={"outlined"} size={"small"} onClick={handleCancel}>Annuler</Button>
+                    <Button variant={"outlined"} onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Envoyer</Button>
+                    <Button variant={"outlined"} onClick={handleCancel} sx={{borderRadius: "20px"}}>Annuler</Button>
                 </DialogActions>
                 
             </Stack>

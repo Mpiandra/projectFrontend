@@ -1,8 +1,9 @@
 import React, { Dispatch, SetStateAction } from "react";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from "@mui/material";
 import axiosInstance from "../../../axiosInstance.ts";
 import { CategoryJoinProductType } from "../../../Hooks/types.ts";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors/index.ts";
 
 
 interface DeleteCategoryProps {
@@ -35,10 +36,9 @@ const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, 
         <Dialog open={open}
                 onClose={handleClose}
                 maxWidth={"lg"}
-                fullWidth
         >
             <DialogTitle>
-                {`Supprimer la catégorie ${categoryName} ?`}
+                <Typography variant="h4">Supprimer la catégorie {categoryName}</Typography>
             </DialogTitle>
             <DialogContent>
                 <DialogContentText>
@@ -46,8 +46,8 @@ const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, 
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button variant={"outlined"} size={"small"} onClick={handleSubmit}>Valider</Button>
-                <Button variant={"outlined"} size={"small"} onClick={handleClose}>Annuler</Button>
+                <Button variant={"outlined"} onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.neutral, borderRadius: "20px"}}>Valider</Button>
+                <Button variant={"outlined"} size={"small"} onClick={handleClose} sx={{borderRadius: "20px"}} >Annuler</Button>
             </DialogActions>
         </Dialog>
     )

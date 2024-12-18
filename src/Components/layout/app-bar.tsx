@@ -20,7 +20,7 @@ export default function Appbar (){
         <React.Fragment>
             <AppBar
                     sx={{
-                        background: colors.primary,
+                        background: colors.background,
                         justifyContent: "center",
                     }}
             >

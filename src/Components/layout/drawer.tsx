@@ -12,19 +12,21 @@ import {
 } from "@mui/material";
 import {LogoutSharp} from "@mui/icons-material";
 import React, {ReactNode} from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { BadgeEuro, ChartBarStacked, Layers, Move3D, ShoppingBasket, Store, Users } from "lucide-react";
 import { colors } from "../../Colors";
 
-export default function AppDrawer({children}:{children:ReactNode}){
-    const drawerWidth =240
+export default function AppDrawer({ children }: { children: ReactNode }) {
+    const drawerWidth = 240;
 
     const navigate = useNavigate();
+    const location = useLocation(); // Utilisé pour obtenir l'URL actuelle
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login');
-    }
+    };
+
     const arrayLink = [
         {
             link: "/categories",
@@ -61,11 +63,7 @@ export default function AppDrawer({children}:{children:ReactNode}){
             label: "Transferts",
             icon: <Move3D />
         },
-        
     ];
-
-    
-
 
     return (
         <>
@@ -74,43 +72,59 @@ export default function AppDrawer({children}:{children:ReactNode}){
                 sx={{
                     width: drawerWidth,
                     flexShrink: 0,
-                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', backgroundColor: colors.primary },
-                    
-                }} >
-
-                <Box sx={{ flex: 1, display: "flex", flexDirection: "column"}}>
-                    <Toolbar/>
-                    <Divider sx={{mt:1}}/>
-                    <List sx={{height: "90vh",
-                                overflowY: "auto"
-                    }}>
-                        {arrayLink.map((item) => {
-                            return (
-                                <ListItem key={item.link}>
-
-                                    <ListItemButton slot="link" to={item.link}>
-                                        <ListItemIcon>{item.icon}</ListItemIcon>
-                                        <ListItemText primary={item.label} />
-                                    </ListItemButton>
-                                </ListItem>
-                            )
-                        })}
-                    </List>
-                    <Divider />
-                    <List sx={{display:"flex",height:"10vh", alignItems:"flex-end"}}>
-                        <ListItem>
-                            <Button onClick={handleLogout} variant="outlined" size="small" endIcon={<LogoutSharp/>} sx={{backgroundColor: colors.neutral, color: colors.secondary}}>
-                                Se déconnecter
-                            </Button>
-                        </ListItem>
-                    </List>
+                    [`& .MuiDrawer-paper`]: {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                        backgroundColor: colors.primary,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100vh',
+                    },
+                }}
+            >
+                <Toolbar />
+                <Divider />
+                <List sx={{ flexGrow: 1, overflowY: 'auto' }}>
+                    {arrayLink.map((item) => {
+                        const isActive = location.pathname === item.link; 
+                        return (
+                            <ListItem key={item.link} disablePadding>
+                                <ListItemButton
+                                    onClick={() => navigate(item.link)}
+                                    sx={{
+                                        backgroundColor: isActive ? colors.textDefault : 'inherit', 
+                                        color: isActive ? colors.primary : colors.textDefault, 
+                                        '&:hover': {
+                                            backgroundColor: colors.secondary, 
+                                            color: colors.primary,
+                                        },
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ color: isActive ? colors.primary : 'inherit' }}>
+                                        {item.icon}
+                                    </ListItemIcon>
+                                    <ListItemText primary={item.label} />
+                                </ListItemButton>
+                            </ListItem>
+                        );
+                    })}
+                </List>
+                <Divider />
+                <Box sx={{ padding: 2, marginTop: 'auto' }}>
+                    <Button
+                        onClick={handleLogout}
+                        variant="outlined"
+                        size="small"
+                        endIcon={<LogoutSharp />}
+                        sx={{ backgroundColor: colors.primary, color: colors.secondary }}
+                    >
+                        Se déconnecter
+                    </Button>
                 </Box>
             </Drawer>
-            <Box marginLeft={`${drawerWidth}px` }>
-                {
-                    children
-                }
+            <Box marginLeft={`${drawerWidth}px`}>
+                {children}
             </Box>
         </>
-    )
+    );
 }

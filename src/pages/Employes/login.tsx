@@ -3,9 +3,10 @@ import InputField from "../../Components/Common/Input.tsx";
 import {Dispatch, SetStateAction, useState} from "react";
 import axiosInstance from "../../axiosInstance.ts";
 import {useNavigate} from "react-router-dom";
-import {Button, Container, Stack} from "@mui/material";
+import {Button, Stack, Box} from "@mui/material";
 import { useSnackbar } from "notistack";
 import Typography from "@mui/material/Typography";
+import { colors } from "../../Colors/index.ts";
 
 const Login: React.FC = () => {
     const[mailEmployee, setMailEmployee] : [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState();
@@ -28,7 +29,7 @@ const Login: React.FC = () => {
                 enqueueSnackbar("Connexion réussie", {variant: "success"});
                 
                 
-                navigate('/employeeHome')
+                navigate('/categories')
             }catch (error){
                 enqueueSnackbar(`Erreur d'authentification ${error}`, {variant: "error"});
                 console.error(error);
@@ -38,46 +39,37 @@ const Login: React.FC = () => {
 
 
     return (
-        <Stack
-            direction="column"
-            spacing={2}
-            sx={{
-                display:"flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius : 1,
-                height : "100%",
-                width:"100%",
-                mt:"10rem"
+         
+                <Stack direction={"column"}
+                             spacing={2}
+                             sx={{justifyContent: "center",
+                                    alignItems: "center",
+                            background: colors.tertiary
+                             }}>
+                        <Typography variant="h3" color={colors.primary} sx={{fontWeight:800,marginBottom:4}}>Connexion</Typography>
 
-            }}
-        >
-            <Container maxWidth="md"  sx={{bgcolor:"whitesmoke",height:"30rem",borderRadius:5,display:"flex",flexDirection:"column", justifyContent: "center",
-                alignItems: "center",}}>
-                <Typography variant="h3" color="secondary" sx={{fontWeight:800,marginBottom:4}}>Connexion</Typography>
+                        <InputField type="email"
+                            name="emailEmployee"
+                            label="E-mail"
+                            id="outlined-basic"
+                            value={mailEmployee ?? ""}
+                            onChange={setMailEmployee}
+                            required
 
-                    <InputField type="email"
-                           name="emailEmployee"
-                           label="E-mail"
-                           id="outlined-basic"
-                           value={mailEmployee ?? ""}
-                           onChange={setMailEmployee}
-                           required
+                        />
 
-                    />
+                        <InputField type="password"
+                            name="password"
+                            label="Mot de passe"
+                            id="outlined-password-input"
+                            value={password ?? ""}
+                            onChange={setPassword}
+                            required
+                        />
+                        <Button variant="contained" sx={{width:"50%", background: colors.primary, color: colors.textDefault }} size="small"   onClick={handleSubmit}>Se connecter</Button>
+                    </Stack>
 
-                    <InputField type="password"
-                           name="password"
-                           label="Mot de passe"
-                           id="outlined-password-input"
-                           value={password ?? ""}
-                           onChange={setPassword}
-                           required
-                    />
-                <Button variant="contained" color="secondary" sx={{width:"50%"}} size="small"   onClick={handleSubmit}>Se connecter</Button>
-            </Container>
 
-        </Stack>
 
     )
 }

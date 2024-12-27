@@ -1,8 +1,9 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
 import React, { Dispatch, SetStateAction } from "react";
 import { PointOfSale } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors";
 
 interface DeletePosDialogProps{
     open: boolean;
@@ -39,16 +40,20 @@ const DeletePosDialog: React.FC<DeletePosDialogProps>= ({open, handleClose, sele
         <Dialog open={open}
                 onClose={handleClose}
                 maxWidth={'lg'}
-                fullWidth>
-            <DialogTitle>Supprimer le point de vente {selectedPos?.pointOfSaleName}</DialogTitle>
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }} >
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Supprimer le point de vente {selectedPos?.pointOfSaleName}</Typography></DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Voulez-vous vraiment supprimer ce point de vente ?
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" size="small" onClick={handleSubmit}>Valider</Button>
-                <Button variant="outlined" size="small" onClick={handleClose}>Annuler</Button>
+                <Button variant="outlined" size="small" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Valider</Button>
+                <Button variant="outlined" size="small" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button>
             </DialogActions>
 
         </Dialog>

@@ -75,7 +75,7 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = ({ open, handleClo
                 />
             </Stack>
                 <DialogActions>
-                    <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.neutral, borderRadius: "20px"}}>Modifier</Button>
+                    <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Modifier</Button>
                     <Button variant="outlined" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button> 
                 </DialogActions>
                     

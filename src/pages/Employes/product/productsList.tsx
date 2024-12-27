@@ -147,7 +147,7 @@ const ProductsList: React.FC = () => {
                     <Add />
                 </Fab>
                 <Grid size={12}>
-                    <Stack spacing={1}>
+                    <Stack spacing={3}>
                         {productDataList.map((data, index) => {
                             const categoryTabValue = tabValues[data.idCategory] || 0; // Par défaut, sélectionne le premier onglet
 
@@ -234,6 +234,12 @@ const ProductsList: React.FC = () => {
                                                                             component="img"
                                                                             image={`http://localhost:9000${product.imageUrl}`}
                                                                             alt={product.productName}
+                                                                            sx={
+                                                                                {
+                                                                                    height: 200,
+                                                                                    objectFit: "cover"
+                                                                                }
+                                                                            }
                                                                         />
                                                                         <Divider />
                                                                         <CardContent sx={{

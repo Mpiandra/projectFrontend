@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button,  Paper,  Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import { AddSharp} from "@mui/icons-material";
+import {  Fab,  Paper,  Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Add} from "@mui/icons-material";
 import AddSaleDialog from "./addSale";
 import axiosInstance from "../../../axiosInstance";
 import { SaleGetted } from "../../../Hooks/types";
@@ -9,6 +9,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { colors } from "../../../Colors";
 
 const SaleList: React.FC = () => {
 
@@ -84,33 +85,37 @@ const SaleList: React.FC = () => {
                         handleClose={handleCloseAddSale}
                         filteredSaleData={filteredSaleData} />
 
-        <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handleOpenAddSale}>Vente</Button>
-        <Typography>Voir les ventes du : </Typography>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker disableFuture={true}
-                         onChange={(value) => handleDatechange(value)}
-                         minDate={dayjs(minDate)}/>
-        </LocalizationProvider>
+        <Fab onClick={handleOpenAddSale} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                    <Add />
+                </Fab>
+        <Stack direction={"row"} spacing={2}>
+            <Typography variant="h5" sx={{color: colors.neutral}}>Voir les ventes du : </Typography>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker disableFuture={true}
+                            onChange={(value) => handleDatechange(value)}
+                            minDate={dayjs(minDate)}/>
+            </LocalizationProvider>
+        </Stack>
 
         
-        <Stack direction={"column"} spacing={2}>
-            {filteredSaleData?.map((sale) => {
+        <Stack direction={"column"} spacing={2} margin={2}>
+            {filteredSaleData?.map((sale, index) => {
                 return (
-                    <Paper elevation={5}>
+                    <Paper elevation={5} key={index} sx={{background: colors.background}}>
                     <Table key={sale.idSale}>
                     <TableHead>
-                        <TableRow>
-                            <TableCell>Produit</TableCell>
-                            <TableCell>Prix unitaire</TableCell>
-                            <TableCell>Quantité vendue</TableCell>
-                            <TableCell>Prix total</TableCell>
+                        <TableRow sx={{background: colors.secondary}}>
+                            <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Produit</Typography></TableCell>
+                            <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Prix unitaire</Typography></TableCell>
+                            <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Quantité vendue</Typography></TableCell>
+                            <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Prix total</Typography></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {sale.saleRows.map((row) => {
                             return (
                                  <TableRow key={row.idProduct}>
-                                    <TableCell>{row.productName}</TableCell>
+                                    <TableCell>{row.productName} </TableCell>
                                     <TableCell>{row.price}</TableCell>
                                     <TableCell>{row.quantitySale}</TableCell>
                                     <TableCell>{row.priceSale}</TableCell>
@@ -120,7 +125,7 @@ const SaleList: React.FC = () => {
                         })}
                         <TableRow>
                                     <TableCell>Total</TableCell>
-                                    <TableCell colSpan={3}>{sale.totalPrice}</TableCell>
+                                    <TableCell colSpan={3} sx={{textAlign: "center"}}>{sale.totalPrice}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from "@mui/material";
 import InputField from "../../../Components/Common/Input";
 import { useState } from "react";
 import axiosInstance from "../../../axiosInstance";
 import { useSnackbar } from "notistack";
 import { PointOfSale, ProductStockPosted } from "../../../Hooks/types";
+import { colors } from "../../../Colors";
 
 interface AddPosDialogProps {
     open: boolean;
@@ -86,11 +87,16 @@ const AddPosDialog: React.FC<AddPosDialogProps> = ({open, handleClose, pointOfSa
         <Dialog open = {open}
                 onClose={handleClose}
                 maxWidth={'lg'}
-                fullWidth>
-                    <DialogTitle>Ajouter un nouveau point de vente</DialogTitle>
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }}  >
+                    <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Ajouter un nouveau point de vente</Typography></DialogTitle>
                     <DialogContent>
                         <Stack direction={"column"}
-                                spacing={2} >
+                                spacing={2}
+                                margin={2} >
                             <InputField type="text"
                                     label="Nom du point de vente"
                                     value={posName}
@@ -108,8 +114,8 @@ const AddPosDialog: React.FC<AddPosDialogProps> = ({open, handleClose, pointOfSa
                     </DialogContent>
                     
                     <DialogActions>
-                        <Button variant="outlined" size="small" onClick={handleSubmit }>Ajouter</Button>
-                        <Button variant="outlined" size="small" onClick={handleCloseReset}>Annuler</Button>
+                        <Button variant="outlined" onClick={handleSubmit } sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Ajouter</Button>
+                        <Button variant="outlined" onClick={handleCloseReset} sx={{borderRadius: "20px"}}>Annuler</Button>
                     </DialogActions>
 
         </Dialog>

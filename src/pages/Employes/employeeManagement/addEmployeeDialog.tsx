@@ -1,4 +1,4 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Stack } from "@mui/material";
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../axiosInstance";
 import { Employee, Permissions, PointOfSale } from "../../../Hooks/types";
@@ -6,6 +6,7 @@ import InputField from "../../../Components/Common/Input";
 import { useSnackbar } from "notistack";
 import { AxiosResponse } from "axios";
 import { transformToEmployee } from "../../../Hooks/useGroupData";
+import { colors } from "../../../Colors";
 
 interface AddEmployeeProps {
     open: boolean;
@@ -178,9 +179,16 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
     }
 
     return (
-        <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
-            <DialogTitle>Ajouter un employé</DialogTitle>
+        <Dialog open={open} onClose={handleClose}
+                maxWidth="lg" 
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }}>
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Ajouter un employé</Typography></DialogTitle>
             <DialogContent>
+                <Box sx={{margin: 2}}>
                 <FormControl fullWidth>
                     <Stack direction="column" spacing={2}>
                         <InputLabel id="selectLabel">Point de vente</InputLabel>
@@ -218,10 +226,11 @@ const AddEmployeeDialog: React.FC<AddEmployeeProps> = ({ open, handleClose, empl
                         </FormGroup>
                     </Stack>
                 </FormControl>
+                </Box>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" size="small" onClick={handleSubmit}>Ajouter</Button>
-                <Button variant="outlined" size="small" onClick={handleCancel}>Annuler</Button>
+                <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Ajouter</Button>
+                <Button variant="outlined" onClick={handleCancel} sx={{borderRadius: "20px"}}>Annuler</Button>
             </DialogActions>
         </Dialog>
     );

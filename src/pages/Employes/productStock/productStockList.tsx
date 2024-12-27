@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { Button, Divider, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import { AddSharp } from "@mui/icons-material";
+import { Button, Divider, Fab, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Add, AddSharp } from "@mui/icons-material";
 import { useState } from "react";
 import AddToStockDialog from "./addToStockDialog";
 import { CategoryWithStock, Employee } from "../../../Hooks/types";
@@ -59,22 +59,25 @@ const ProductStockList = () => {
                                 handleClose={handleCloseAddToStock}
                                 productStockData={productStockData} />
 
-            <Typography variant="h3" align="center">Stock</Typography>
-            <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handleOpenAddToStock}>Stock</Button>
+            <Fab onClick={handleOpenAddToStock} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                    <Add />
+                </Fab>
+            <Stack spacing={2} margin={2}>
             {productStockData.map((category) => {
                 return (
                     <React.Fragment key={category.idCategory}>
-                        <Typography variant={"h4"} align="center" sx={{color: colors.neutral}}>{category.categoryName}</Typography>
-                        <Paper elevation={5}>
+                        
+                        <Paper elevation={5} sx={{background: colors.background}}>
+                        <Typography variant={"h4"} align="center" sx={{color: colors.secondary}}>{category.categoryName}</Typography>
                             {category.productTypes.map((productType) => {
                                 return (
                                     <React.Fragment key={productType.idProductType}>
-                                        <Typography variant="h5" align="center">{productType.productTypeName}</Typography>
+                                        <Typography variant="h5" color={colors.neutral}>{productType.productTypeName}</Typography>
                                         <Table>
                                             <TableHead>
-                                                <TableRow>
-                                                    <TableCell align="center">Produit</TableCell>
-                                                    <TableCell align="center">Quantité en stock</TableCell>
+                                                <TableRow sx={{background: colors.secondary}}>
+                                                    <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Produit</Typography></TableCell>
+                                                    <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Quantité en stock</Typography></TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -98,6 +101,8 @@ const ProductStockList = () => {
                     
                 )
             })}
+            </Stack>
+            
         </div>
     )
 }

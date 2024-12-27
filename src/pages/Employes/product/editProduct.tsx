@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from "@mui/material"
 import { AllProductData, Attribute, CategoryJoinProductType, ProductJoinProductAttribute, ProductJoinProductType   } from "../../../Hooks/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import InputField from "../../../Components/Common/Input";
 import axiosInstance from "../../../axiosInstance";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors";
 
 interface EditProductDialogProps {
     open: boolean;
@@ -118,12 +119,17 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({open, handleClose,
                 open={open}
                 onClose={handleClose}
                 maxWidth={'lg'}
-                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }}
         >
-            <DialogTitle>Modifier le produit {selectedProduct?.productName}</DialogTitle>
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Modifier le produit {selectedProduct?.productName}</Typography></DialogTitle>
             <DialogContent>
                 <Stack direction="column"
-                        spacing={2}>
+                        spacing={2}
+                        margin={2}>
                             <InputField type="text"
                                         label="Nom du produit"
                                         value={productName}
@@ -154,8 +160,8 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({open, handleClose,
             </DialogContent>
 
             <DialogActions>
-                <Button variant="outlined" onClick={handleEditProduct}>Envoyer</Button>
-                <Button variant="outlined" onClick={handleClose}>Annuler</Button>
+                <Button variant="outlined" onClick={handleEditProduct} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Envoyer</Button>
+                <Button variant="outlined" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button>
             </DialogActions>
         </Dialog>
     )

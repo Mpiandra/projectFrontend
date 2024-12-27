@@ -1,8 +1,9 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material"
 import { AllProductData, ProductJoinProductAttribute } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import { Dispatch, SetStateAction } from "react";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors";
 
 interface DeleteProductDialogProps {
     open: boolean;
@@ -39,16 +40,20 @@ const DeleteProductDialog : React.FC<DeleteProductDialogProps> = ({open, handleC
         <Dialog open={open}
                 onClose={handleClose}
                 maxWidth={'lg'}
-                fullWidth>
-            <DialogTitle>Supprimer le produit {selectedProduct?.productName}</DialogTitle>
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }}>
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Supprimer le produit {selectedProduct?.productName}</Typography></DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Voulez-vous vraiment supprimer ce produit ?
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" size="small" onClick={handleDeleteProduct}>Valider</Button>
-                <Button variant="outlined" size="small" onClick={handleClose}>Annuler</Button>
+                <Button variant="outlined" size="small" onClick={handleDeleteProduct} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Valider</Button>
+                <Button variant="outlined" size="small" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button>
             </DialogActions>
 
         </Dialog>

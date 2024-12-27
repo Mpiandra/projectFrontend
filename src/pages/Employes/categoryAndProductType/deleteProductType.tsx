@@ -36,7 +36,13 @@ const DeleteProductType: React.FC<DeleteProductTypeProps> = ({open, handleClose,
         }
     }
     return <Dialog open={open}
-                    onClose={handleClose} >
+                    onClose={handleClose} 
+                    maxWidth="lg"
+                    PaperProps={{
+                        sx: {
+                            borderRadius: "20px"
+                        }
+                    }}>
                         <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Supprimer le type de produit</Typography></DialogTitle>
                         <DialogContent>
                             <DialogContentText>
@@ -44,7 +50,7 @@ const DeleteProductType: React.FC<DeleteProductTypeProps> = ({open, handleClose,
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            <Button variant="outlined" size="small" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.neutral, borderRadius: "20px"}}>Valider</Button>
+                            <Button variant="outlined" size="small" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Valider</Button>
                             <Button variant="outlined" size="small" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button>
                         </DialogActions>
             </Dialog>

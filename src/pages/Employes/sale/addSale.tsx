@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid2"
 import { CategoryWithStock, Employee, ProductStock, ProductStockPosted, Sale, SaleGetted, SaleRow } from "../../../Hooks/types";
@@ -6,6 +6,7 @@ import axiosInstance from "../../../axiosInstance";
 import { groupStockProducts } from "../../../Hooks/useGroupData";
 import { Checkbox } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors";
 
 interface AddSaleProps{
     open: boolean;
@@ -80,7 +81,12 @@ const AddSaleDialog: React.FC<AddSaleProps> = ({open, handleClose, filteredSaleD
     };
 
     useEffect(() => {
-        // Calculer le total des prix
+        if(open){
+            console.log("filteredSleDataAdd: ", filteredSaleData);
+            
+        }
+    }, [open])
+    useEffect(() => {
         const total = saleRows.reduce((sum, row) => sum + row.priceSale, 0);
         setTotalPrice(total);
     }, [saleRows]); 
@@ -123,13 +129,16 @@ const AddSaleDialog: React.FC<AddSaleProps> = ({open, handleClose, filteredSaleD
                 totalPrice: totalPrice
             }
     
+            console.log("currentEMployee: ", currentEmployee);
+            
             const addSaleResponse = await axiosInstance.post('/sale', newSale)
     
             saleRows.map((row) => {
                 row.sale = addSaleResponse.data
             })
     
-            await axiosInstance.post('/saleRows', saleRows)
+            const addSaleRowsResponse = await axiosInstance.post('/saleRows', saleRows)
+            
     
             const productStockRow: ProductStockPosted[] = []
     
@@ -152,10 +161,44 @@ const AddSaleDialog: React.FC<AddSaleProps> = ({open, handleClose, filteredSaleD
     
             await axiosInstance.put('/substractProductStocks', productStockRow)
 
+            const saleRowsPosted: SaleRow = addSaleRowsResponse.data
+            
+            const generateFacture = await axiosInstance.post('/generatePdf', saleRowsPosted,{params: {
+                nameEmployee: currentEmployee?.name,
+                saleDate: newSale.saleDate,
+                totalPrice: newSale.totalPrice
+            }, responseType: "blob",
+                withCredentials: true});
+
+                const url = window.URL.createObjectURL(new Blob([generateFacture.data], { type: "application/pdf" }));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", "facture.pdf");
+                document.body.appendChild(link);
+                link.click();
+
+            console.log("saleRowPosted : ", saleRowsPosted);
+            
+
+
+            const idSale = addSaleResponse.data.idSale;
+            const idPointOfSale = addSaleResponse.data.pointOfSale.idPointOfSale;
+            const saleDate = addSaleResponse.data.saleDate;
+            const priceTotal = addSaleResponse.data.totalPrice;
+            
+
             const newSaleData = {
-                ...addSaleResponse.data,
+                idSale,
+                idPointOfSale,
+                saleDate,
+                priceTotal,
                 saleRows: saleRows
             }
+
+            console.log("filteredSaleData : ", filteredSaleData);
+            console.log("newSaleData: ", newSaleData);
+            
+            
 
             filteredSaleData.push(newSaleData);
 
@@ -177,26 +220,27 @@ const AddSaleDialog: React.FC<AddSaleProps> = ({open, handleClose, filteredSaleD
     return (
         <Dialog open={open}
                 onClose={handleClose} fullScreen>
-            <DialogTitle>Ajouter une vente</DialogTitle>
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Enregistrer une vente</Typography></DialogTitle>
             <DialogContent>
                 <Grid container spacing={1}>
                     <Grid size={saleRows.length > 0 ? 8 : 12}>
+                        <Stack spacing={4}>
                         {productStockData?.map((category) => {
                             return (
-                                <React.Fragment key={category.idCategory}>
-                                    <Typography>{category.categoryName}</Typography>
+                                <Paper elevation={3} key={category.idCategory} sx={{background: colors.background, padding: 2}}>
+                                    <Typography variant="h5" sx={{color: colors.secondary}} align="center">{category.categoryName}</Typography>
                                     {category.productTypes.map((productType) => {
                                         return (
                                             <React.Fragment key={productType.idProductType}>
-                                                <Typography>{productType.productTypeName}</Typography>
+                                                <Typography variant="h6">{productType.productTypeName}</Typography>
                                                 <Table>
                                                     <TableHead>
-                                                        <TableRow>
-                                                            <TableCell>Selection</TableCell>
-                                                            <TableCell>Produit</TableCell>
-                                                            <TableCell>Prix unitaire</TableCell>
-                                                            <TableCell>Quantité en stock</TableCell>
-                                                            <TableCell>Quatité vendue</TableCell>
+                                                        <TableRow sx={{background: colors.primary}}>
+                                                            <TableCell><Typography sx={{color: colors.background}}>Selection</Typography></TableCell>
+                                                            <TableCell><Typography sx={{color: colors.background}}>Produit</Typography></TableCell>
+                                                            <TableCell><Typography sx={{color: colors.background}}>Prix unitaire</Typography></TableCell>
+                                                            <TableCell><Typography sx={{color: colors.background}}>Quantité en stock</Typography></TableCell>
+                                                            <TableCell><Typography sx={{color: colors.background}}>Quatité vendue</Typography></TableCell>
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
@@ -244,42 +288,55 @@ const AddSaleDialog: React.FC<AddSaleProps> = ({open, handleClose, filteredSaleD
                                             </React.Fragment>
                                         )
                                     })}
-                                </React.Fragment>
+                                </Paper>
                             )
                         })}
+                        </Stack>
                     </Grid>
-                    <Grid size={4}>
-                        <Typography>Vente</Typography>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Produit</TableCell>
-                                    <TableCell>Quantité</TableCell>
-                                    <TableCell>Prix total</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                            {saleRows.map((row) => {
-                            return (
-                                <TableRow key={row.idSaleRow}>
-                                    <TableCell>{row.product.productName}</TableCell>
-                                    <TableCell>{row.quantitySale}</TableCell>
-                                    <TableCell>{row.priceSale}</TableCell>
-                                </TableRow>
-                            )
-                        })}
-                        <TableRow>
-                            <TableCell>Prix total</TableCell>
-                            <TableCell colSpan={2}>{totalPrice}</TableCell>
+                    {saleRows.length > 0 &&
+                        <Grid size={4} sx={{
+                            position: "sticky",
+                            top: 0,
+                            alignSelf: "flex-start",
+                            backgroundColor: "white", // Pour que le fond soit visible au-dessus des autres éléments
+                            zIndex: 10, // Assure que la grille fixe reste au-dessus
+                            padding: "10px", // Optionnel : Ajoute un peu d'espace
+                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Optionnel : Ajoute une ombre pour la visibilité
+                            background: colors.primary
+            }}>
+                <Typography variant="h5" align="center" sx={{color: colors.textDefault}}>Vente</Typography>
+                <Table>
+                    <TableHead>
+                        <TableRow sx={{background: colors.background}}>
+                            <TableCell><Typography align="center" sx={{color: colors.primary}}>Produit</Typography></TableCell>
+                            <TableCell><Typography align="center" sx={{color: colors.primary}}>Quantité</Typography></TableCell>
+                            <TableCell><Typography align="center" sx={{color: colors.primary}}>Prix total</Typography></TableCell>
                         </TableRow>
-                            </TableBody>
-                        </Table>
-                    </Grid>
-                </Grid>
+                    </TableHead>
+                    <TableBody>
+                    {saleRows.map((row, index) => {
+                    return (
+                        <TableRow key={index}>
+                            <TableCell><Typography align="center" sx={{color: colors.textDefault}}>{row.product.productName}</Typography></TableCell>
+                            <TableCell><Typography align="center" sx={{color: colors.textDefault}}>{row.quantitySale}</Typography></TableCell>
+                            <TableCell><Typography align="center" sx={{color: colors.textDefault}}>{row.priceSale}</Typography></TableCell>
+                        </TableRow>
+                    )
+                })}
+                <TableRow>
+                    <TableCell><Typography align="center" sx={{color: colors.textDefault}}>Prix total</Typography></TableCell>
+                    <TableCell sx={{textAlign: "center"}} colSpan={2}><Typography sx={{color: colors.textDefault}}>{totalPrice}</Typography></TableCell>
+                </TableRow>
+                    </TableBody>
+                </Table>
+            </Grid>
+                    }
+                    
+                </Grid> 
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" size="small" onClick={handleSubmit}>Ajouter</Button>
-                <Button variant="outlined" size="small" onClick={handleCancel}>Annuler</Button>
+                <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Enregistrer</Button>
+                <Button variant="outlined" onClick={handleCancel} sx={{borderRadius: "20px"}} >Annuler</Button>
             </DialogActions>
         </Dialog>
     )

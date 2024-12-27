@@ -1,10 +1,11 @@
-import { Dialog, DialogContent, DialogTitle, Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography, TextField, Button } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography, TextField, Button, Stack, Paper, DialogActions } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CategoryWithStock, Employee, ProductStockPosted } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import Grid from '@mui/material/Grid2';
 import { Checkbox } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors";
 
 interface AddToStockProps {
     open: boolean;
@@ -104,20 +105,21 @@ const AddToStockDialog: React.FC<AddToStockProps> = ({ open, handleClose, produc
 
     return (
         <Dialog open={open} onClose={handleClose} fullScreen>
-            <DialogTitle>Enregistrer entrée de produits</DialogTitle>
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Enregistrer entrée de produits</Typography></DialogTitle>
             <DialogContent>
                 <Grid container spacing={1}>
                     <Grid size={12}>
+                        <Stack spacing={4}>
                         {productStockData.map((category) => (
-                            <React.Fragment key={category.categoryName}>
-                                <Typography variant="h6">{category.categoryName}</Typography>
+                            <Paper elevation={3} sx={{background: colors.background}} key={category.categoryName}>
+                                <Typography variant="h5" sx={{color: colors.secondary}} align="center">{category.categoryName}</Typography>
                                 {category.productTypes.map((productType) => (
                                     <React.Fragment key={productType.productTypeName}>
-                                        <Typography variant="subtitle1">{productType.productTypeName}</Typography>
+                                        <Typography variant="h6">{productType.productTypeName}</Typography>
                                         {productType.products.length > 0 && productType.products[0].idProduct!== null ?(
                                             <Table>
                                                 <TableHead>
-                                                    <TableRow>
+                                                    <TableRow sx={{background: colors.primary}}>
                                                         <TableCell>Selection</TableCell>
                                                         <TableCell>Produit</TableCell>
                                                         <TableCell>Quantité</TableCell>
@@ -154,16 +156,16 @@ const AddToStockDialog: React.FC<AddToStockProps> = ({ open, handleClose, produc
                                         ) : null}
                                     </React.Fragment>
                                 ))}
-                            </React.Fragment>
+                            </Paper>
                         ))}
-                    </Grid>
-                    <Divider />
-                    <Grid size={4}>
-                        <Button variant="outlined" size="small" onClick={handleSubmit}>Enregistrer</Button>
-                        <Button variant="outlined" size="small" onClick={handleClose}>Annuler</Button>
+                        </Stack>
                     </Grid>
                 </Grid>
             </DialogContent>
+            <DialogActions>
+                <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Enregistrer</Button>
+                <Button variant="outlined" onClick={handleClose} sx={{borderRadius: "20px"}} >Annuler</Button>
+            </DialogActions>
         </Dialog>
     );
 };

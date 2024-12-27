@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Stack, Typography } from "@mui/material";
-import { AddSharp, DeleteSharp, EditSharp } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary, Fab, IconButton, Paper, Stack, Typography } from "@mui/material";
+import { Add, DeleteSharp, EditSharp } from "@mui/icons-material";
 import AddEmployeeDialog from "./addEmployeeDialog";
 import { SnackbarProvider } from "notistack";
 import { Employee } from "../../../Hooks/types";
@@ -8,6 +8,8 @@ import axiosInstance from "../../../axiosInstance";
 import EditEmployeeDialog from "./editEmployeeDialog";
 import { transformToEmployeeList } from "../../../Hooks/useGroupData";
 import DeleteEmployeeDilog from "./deleteEmployeeDialog";
+import { colors } from "../../../Colors";
+import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 
 const translatedPermissions: { [key: string]: string } = {
     canAddCategory: "Peut ajouter catégorie",
@@ -102,9 +104,9 @@ const EmployeeList: React.FC = () => {
 
     return (
         <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
-            <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handleOpenAddEmployee}>
-                Ajouter
-            </Button>
+            <Fab onClick={handleOpenAddEmployee} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                    <Add />
+                </Fab>
 
             <AddEmployeeDialog open={openAddEmployee} 
                                 handleClose={handleCloseAddEmployee} 
@@ -122,32 +124,57 @@ const EmployeeList: React.FC = () => {
                                     setEmployeeList={setEmployeeList} />
 
             <div>
+            <Stack direction={"column"} spacing={3}>
                 {employeeList.map((employee) => (
 
-                    <Stack direction={"column"} spacing={3}>
-                        <Card key={employee.idEmployee} elevation={5}>
-                            <CardHeader
-                                        title={<Typography align="center" variant="h4">{employee.nameEmployee}</Typography>}
-                                        subheader={<Typography align="center" variant="h6">{employee.mailEmployee}</Typography>}
+                   
+                        <Paper elevation={3}>
+                            <Accordion>
+                                <AccordionSummary
+                                    expandIcon={<ArrowDropDownIcon/>}
+                                    aria-controls="panel2-content"
+                                    id="panel2-header"
+                                    sx={{backgroundColor: colors.secondary}}
+                                >
+                                    <Stack direction={"row"}
+                                        justifyContent={"space-between"}
+                                        alignItems={"center"}
+                                        sx={{ width: "100%"}}>
+                                        <Stack direction={"column"} spacing={1}>
+                                            <Typography variant="h5">{employee.nameEmployee}</Typography>
+                                            <Typography variant="h6">{employee.mailEmployee}</Typography>
+                                        </Stack>
+                                        <Stack direction={"row"} spacing={1}>
+                                            <IconButton onClick={(event) => {
+                                                event.stopPropagation(); handleOpenEditEmployee(employee)
+                                            }}><EditSharp sx={{color: colors.background}}/></IconButton>
+                                            <IconButton onClick={(event) => {
+                                                event.stopPropagation();
+                                                handleOpenDeleteEmployee(employee);
+                                            }}><DeleteSharp sx={{color: colors.background}} /></IconButton>
+                                        </Stack>
+                                    </Stack>
+                                    
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Stack direction={"column"} spacing={1}>
+                                        <Typography>Point de vente : {employee.pointOfSale ? employee.pointOfSale.pointOfSaleName : 'Aucun'}</Typography>
+                                        <Typography>Permissions : </Typography>
                                         
-                            />
-                            <CardContent><Typography >Point de vente : {employee.pointOfSale?.pointOfSaleName || "Aucun"}</Typography></CardContent>
-                            <CardContent><Typography>Permissions :</Typography>
-                                    <ul>
                                         {formatPermissions(employee.permissions).map((permission, index) => (
-                                        <li key={index}>{permission}</li>
+                                        <Typography key={index}> - {permission}</Typography>
                                     ))}
-                                    </ul>
-                                </CardContent>
-                            <CardActions>
-                                <IconButton onClick={() => handleOpenEditEmployee(employee)}><EditSharp /></IconButton>
-                                <IconButton onClick={() => handleOpenDeleteEmployee(employee)}><DeleteSharp /></IconButton>
-                            </CardActions>
-                        </Card>
-                    </Stack>
+                                    </Stack>
+                                    
+                                </AccordionDetails>
+                            </Accordion>
+
+                        </Paper>
+                   
 
                     
                 ))}
+                 </Stack>
             </div>
         </SnackbarProvider>
     );

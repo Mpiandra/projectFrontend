@@ -61,7 +61,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({open, handleClose,
                         
                 
                     <DialogActions>
-                        <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.neutral, borderRadius: "20px"}}>Ajouter</Button>
+                        <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Ajouter</Button>
                         <Button variant={"outlined"} onClick={handleClose} sx={{borderRadius: "20px"}} >Annuler</Button>
                     </DialogActions>
 

@@ -1,9 +1,10 @@
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Employee, Permissions, PointOfSale } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import { useSnackbar } from "notistack";
 import InputField from "../../../Components/Common/Input";
+import { colors } from "../../../Colors";
 
 interface EditEmployeeProps {
   open: boolean;
@@ -215,9 +216,16 @@ const EditEmployeeDialog: React.FC<EditEmployeeProps> = ({ open, handleClose, se
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle><Typography>Modifier l'employé</Typography></DialogTitle>
+    <Dialog open={open}
+            onClose={handleClose}
+            PaperProps={{
+              sx: {
+                  borderRadius: "20px"
+              }
+          }}>
+      <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Modifier l'employé</Typography></DialogTitle>
       <DialogContent>
+        <Box sx={{margin: 2}}>
         <FormControl fullWidth>
           <Stack direction="column" spacing={2}>
             <InputLabel id="selectLabel">Point de vente</InputLabel>
@@ -255,10 +263,11 @@ const EditEmployeeDialog: React.FC<EditEmployeeProps> = ({ open, handleClose, se
             </FormGroup>
           </Stack>
         </FormControl>
+        </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" size="small" onClick={handleSubmit}>Modifier</Button>
-        <Button variant="outlined" size="small" onClick={handleClose}>Annuler</Button>
+        <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Modifier</Button>
+        <Button variant="outlined" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button>
       </DialogActions>
     </Dialog>
   );

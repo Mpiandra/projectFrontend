@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { CategoryWithStock, Employee, ProductStockPosted, TransferGetted } from "../../../Hooks/types";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { CategoryWithStock, Employee, ProductStockPosted, Transfer, TransferGetted } from "../../../Hooks/types";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import axiosInstance from "../../../axiosInstance";
 import { groupStockProducts } from "../../../Hooks/useGroupData";
@@ -11,9 +11,10 @@ interface ConfirmTransferProps {
     selectedTransfer: TransferGetted | undefined;
     completedTransferIn: TransferGetted[];
     inProgressTransferIn: TransferGetted[];
+    setInProgressTransferIn: Dispatch<SetStateAction<TransferGetted[]>>;
 }
 
-const ConfirmTransferDialog : React.FC<ConfirmTransferProps> = ({open, handleClose, selectedTransfer, completedTransferIn, inProgressTransferIn}) => {
+const ConfirmTransferDialog : React.FC<ConfirmTransferProps> = ({open, handleClose, selectedTransfer, completedTransferIn, inProgressTransferIn, setInProgressTransferIn}) => {
     const [productStockData, setProductStockData] = useState<CategoryWithStock[]>([]);
     const [currentEmployee, setCurrentEmployee] = useState<Employee>();
 
@@ -84,12 +85,14 @@ const ConfirmTransferDialog : React.FC<ConfirmTransferProps> = ({open, handleClo
     
                 completedTransferIn.push(selectedTransfer)
 
-                inProgressTransferIn.filter((transfer) => {
+                const filteredInProgressTransferIn = inProgressTransferIn.filter((transfer) => {
                     if(transfer.idTransfer !== selectedTransfer.idTransfer){
                         return true;
                     }
                 })
-                enqueueSnackbar("Confirmation du trasfert réussie", {variant: "success"});
+
+                setInProgressTransferIn(filteredInProgressTransferIn);
+                enqueueSnackbar("Confirmation du transfert réussie", {variant: "success"});
                 handleClose();
             }
         } catch(error){

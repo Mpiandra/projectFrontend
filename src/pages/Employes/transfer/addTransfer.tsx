@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, Paper, Stack, DialogActions } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { AllProductData, CategoryWithStock, Employee, PointOfSale, ProductStockPosted, Transfer, TransferGetted, TransferRow } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
@@ -6,6 +6,7 @@ import { groupStockProducts, transformToAllProductData } from "../../../Hooks/us
 import Grid from '@mui/material/Grid2';
 import { Checkbox } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
+import { colors } from "../../../Colors";
 
 interface AddTransferProps {
     open: boolean;
@@ -159,6 +160,9 @@ const AddTransferDialog: React.FC<AddTransferProps> = ({ open, handleClose, allT
                     transferRows: transferRowResponse
                 }
 
+                console.log("new TransferData : ", newTransferData  );
+                
+
                 allTransferData.push(newTransferData);
 
                 console.log("newTransferData", newTransferData);
@@ -167,7 +171,7 @@ const AddTransferDialog: React.FC<AddTransferProps> = ({ open, handleClose, allT
                 
 
 
-                if(newTransfer.transferStatus === "En cours"){
+              
                     const productStockList: ProductStockPosted[] = Object.keys(selectedProducts).map((productId) => {
                         const quantityStock = selectedProducts[parseInt(productId)];
                         const product = productStockData
@@ -195,10 +199,20 @@ const AddTransferDialog: React.FC<AddTransferProps> = ({ open, handleClose, allT
                     const updatedProductStocks = await axiosInstance.put("/substractProductStocks", productStockList);
                     console.log("updatedProductStocks: ", updatedProductStocks);
 
-                  
+                const generatePdf = await axiosInstance.post("/generatePdfTransfer", addTransferRowsResponse.data, {params: {
+                    title: "Bon de sortie",
+                    nameEmployee: currentEmployee.name,
+                    dateTransfer: newTransfer.transferDate,
+                    pos: currentEmployee.pointOfSale?.pointOfSaleName
+                }, responseType: "blob",
+                    withCredentials: true})
 
-                }
-                
+                const url = window.URL.createObjectURL(new Blob([generatePdf.data], { type: "application/pdf" }));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", "Bon de sortie.pdf");
+                document.body.appendChild(link);
+                link.click();
                 
                 enqueueSnackbar("Transfer enregistré avec succès", {variant: "success"});
                 handleClose();
@@ -214,105 +228,109 @@ const AddTransferDialog: React.FC<AddTransferProps> = ({ open, handleClose, allT
     };
 
     return (
-        <Dialog open={open} onClose={handleClose} fullScreen>
-            <DialogTitle>Ajouter un transfert</DialogTitle>
+        <Dialog open={open} 
+                onClose={handleClose} 
+                fullScreen>
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Ajouter un transfert</Typography></DialogTitle>
             <DialogContent>
-                    <Grid container spacing={1} sx={{margin: 1}}>
                     
-                            <Grid size={6} justifyContent={"center"}>
-                            <FormControl fullWidth>
-                                <InputLabel id="selectLabel">Point de vente de déstination</InputLabel>
-                                <Select
-                                    labelId="selectLabel"
-                                    label="Point de vente"
-                                    id="selectPos"
-                                    value={selectedPointOfSaleId}
-                                    onChange={selectHandleChange}
-                                >
-                                {pointOfSaleList?.map((pos) => (
-                                    <MenuItem value={pos.idPointOfSale} key={pos.idPointOfSale}>
-                                        {pos.pointOfSaleName}
-                                    </MenuItem>
-                                ))}
+                            <Grid size={6} justifyContent={"center"} sx={{margin: 1}}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="selectLabel">Point de vente de déstination</InputLabel>
+                                    <Select
+                                        labelId="selectLabel"
+                                        label="Point de vente"
+                                        id="selectPos"
+                                        value={selectedPointOfSaleId}
+                                        onChange={selectHandleChange}
+                                    >
+                                    {pointOfSaleList?.map((pos) => (
+                                        <MenuItem value={pos.idPointOfSale} key={pos.idPointOfSale}>
+                                            {pos.pointOfSaleName}
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                                 </FormControl >
                             </Grid>
                     
                     
-                    </Grid>
+                
                 
                         <Grid container spacing={1}>
-                    <Grid size={12}>
-                        {productStockData.map((category) => (
-                            <React.Fragment key={category.categoryName}>
-                                <Typography variant="h6">{category.categoryName}</Typography>
-                                {category.productTypes.map((productType) => (
-                                    <React.Fragment key={productType.productTypeName}>
-                                        <Typography variant="subtitle1">{productType.productTypeName}</Typography>
-                                        {productType.products.length > 0 && productType.products[0].idProduct!== null ?(
-                                            <Table>
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell>Selection</TableCell>
-                                                        <TableCell>Produit</TableCell>
-                                                        <TableCell>Quantité en stock</TableCell>
-                                                        <TableCell>Quantité à transférer</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {productType.products.map((product) => (
-                                                        <TableRow key={product.idProduct}>
-                                                            <TableCell>
-                                                                <Checkbox
-                                                                    checked={selectedProducts[product.idProduct] !== undefined}
-                                                                    onChange={() => handleCheckboxChange(product.idProduct)}
-                                                                />
-                                                            </TableCell>
-                                                            <TableCell>{product.productName}</TableCell>
-                                                            <TableCell>{product.quantityStock}</TableCell>
-                                                            <TableCell>
-                                                                <TextField
-                                                                    type="number"
-                                                                    size="small"
-                                                                    disabled={selectedProducts[product.idProduct] === undefined}
-                                                                    value={selectedProducts[product.idProduct] || ""}
-                                                                    onChange={(e) =>
-                                                                    {
-                                                                        const inputValue = parseInt(e.target.value) || 0;
-                                                                        const maxValue = product.quantityStock;
+                            <Grid size={12}>
+                                <Stack spacing={2} direction={"column"}>
+                                    {productStockData.map((category, index) => (
+                                        <Paper key={index} elevation={3} sx={{backgroundColor: colors.background}}>
+                                            <React.Fragment key={category.categoryName}>
+                                                <Typography variant="h5" align="center">{category.categoryName}</Typography>
+                                                {category.productTypes.map((productType) => (
+                                                    <React.Fragment key={productType.productTypeName}>
+                                                        <Typography variant="h6">{productType.productTypeName}</Typography>
+                                                        {productType.products.length > 0 && productType.products[0].idProduct!== null ?(
+                                                            <Table>
+                                                                <TableHead>
+                                                                    <TableRow sx={{backgroundColor: colors.primary}}>
+                                                                        <TableCell sx={{color: colors.background}}>Selection</TableCell>
+                                                                        <TableCell sx={{color: colors.background}}>Produit</TableCell>
+                                                                        <TableCell sx={{color: colors.background}}>Quantité en stock</TableCell>
+                                                                        <TableCell sx={{color: colors.background}}>Quantité à transférer</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {productType.products.map((product) => (
+                                                                        <TableRow key={product.idProduct}>
+                                                                            <TableCell>
+                                                                                <Checkbox
+                                                                                    checked={selectedProducts[product.idProduct] !== undefined}
+                                                                                    onChange={() => handleCheckboxChange(product.idProduct)}
+                                                                                />
+                                                                            </TableCell>
+                                                                            <TableCell>{product.productName}</TableCell>
+                                                                            <TableCell>{product.quantityStock}</TableCell>
+                                                                            <TableCell>
+                                                                                <TextField
+                                                                                    type="number"
+                                                                                    size="small"
+                                                                                    disabled={selectedProducts[product.idProduct] === undefined}
+                                                                                    value={selectedProducts[product.idProduct] || ""}
+                                                                                    onChange={(e) =>
+                                                                                    {
+                                                                                        const inputValue = parseInt(e.target.value) || 0;
+                                                                                        const maxValue = product.quantityStock;
 
-                                                                        const validValue = inputValue > maxValue ? maxValue : inputValue;
-                                                                        handleQuantityChange(
-                                                                            product.idProduct,
-                                                                            validValue
-                                                                        )
-                                                                    }
-                                                                    }
-                                                                    inputProps={{ 
-                                                                        min: 0,
-                                                                        max: product.quantityStock
-                                                                    }}
-                                                                />
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))}
-                                                </TableBody>
-                                            </Table>
-                                        ) : null}
-                                    </React.Fragment>
-                                ))}
-                            </React.Fragment>
-                        ))}
-                    </Grid>
-                    <Divider />
-                    <Grid size={4}>
-                        <Button variant="outlined" size="small" onClick={handleSubmit}>Enregistrer</Button>
-                        <Button variant="outlined" size="small" onClick={handleClose}>Annuler</Button>
-                    </Grid>
+                                                                                        const validValue = inputValue > maxValue ? maxValue : inputValue;
+                                                                                        handleQuantityChange(
+                                                                                            product.idProduct,
+                                                                                            validValue
+                                                                                        )
+                                                                                    }
+                                                                                    }
+                                                                                    inputProps={{ 
+                                                                                        min: 0,
+                                                                                        max: product.quantityStock
+                                                                                    }}
+                                                                                />
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    ))}
+                                                                </TableBody>
+                                                            </Table>
+                                                        ) : null}
+                                                    </React.Fragment>
+                                                ))}
+                                            </React.Fragment>
+                                        </Paper>
+                                    ))}
+                                </Stack>
+                            </Grid>
+                    <Divider />    
                 </Grid>
-                
-                
             </DialogContent>
+
+            <DialogActions>
+                <Button variant="outlined" sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}} onClick={handleSubmit}>Enregistrer</Button>
+                <Button variant="outlined" sx={{borderRadius: "20px"}} onClick={handleClose}>Annuler</Button>
+            </DialogActions>
         </Dialog>
     );
 };

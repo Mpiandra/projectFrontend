@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,  InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Stack, TextField } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,  InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from "@mui/material";
 import { CategoryJoinProductType, ProductJoinProductType, ProductTypeJoinProductTypeAttribute, AllProductData, ProductAttribute, ProductJoinProductAttribute, Attribute, ProductStockPosted, PointOfSale } from "../../../Hooks/types";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import InputField from "../../../Components/Common/Input";
@@ -6,6 +6,7 @@ import axiosInstance from "../../../axiosInstance";
 import { transformCategoryArray } from "../../../Hooks/useGroupData";
 import { useSnackbar } from "notistack";
 import { AxiosResponse } from "axios";
+import { colors } from "../../../Colors";
 
 interface AddProductProps {
     open: boolean;
@@ -198,9 +199,17 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
 
     return (
         <>
-        <Dialog open={open} maxWidth="lg" fullWidth onClose={handleClose}>
-            <DialogTitle>Ajouter un produit</DialogTitle>
+        <Dialog open={open}
+                maxWidth="lg"
+                onClose={handleClose}
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }}>
+            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Ajouter un produit</Typography></DialogTitle>
             <DialogContent>
+                <Box margin={2}>
                 <FormControl fullWidth id="my-form">
                     <Stack direction={"column"}
                             spacing={2}
@@ -222,7 +231,7 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                                     onChange={setProductName} /> 
 
                         <TextField type="file"
-                                    label="Image"
+                                    label="Image"   
                                     onChange={handleChangeImage}
                                     required
                         />
@@ -248,10 +257,11 @@ const AddProductDialog: React.FC<AddProductProps> = ({ open, categoryDataList, h
                     </Stack>
                     
                 </FormControl>
+                </Box>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" onClick={handleAddProduct}>Ajouter</Button>
-                <Button variant="outlined" onClick={handleCancel}>Annuler</Button>
+                <Button variant="outlined" onClick={handleAddProduct} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Ajouter</Button>
+                <Button variant="outlined" onClick={handleCancel} sx={{borderRadius: "20px"}}>Annuler</Button>
             </DialogActions>
         </Dialog>
         </>

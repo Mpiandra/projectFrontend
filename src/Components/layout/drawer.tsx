@@ -95,8 +95,8 @@ export default function AppDrawer({ children }: { children: ReactNode }) {
                                         backgroundColor: isActive ? colors.textDefault : 'inherit', 
                                         color: isActive ? colors.primary : colors.textDefault, 
                                         '&:hover': {
-                                            backgroundColor: colors.secondary, 
-                                            color: colors.primary,
+                                            backgroundColor: colors.neutral, 
+                                            color: colors.textDefault,
                                         },
                                     }}
                                 >
@@ -116,7 +116,7 @@ export default function AppDrawer({ children }: { children: ReactNode }) {
                         variant="outlined"
                         size="small"
                         endIcon={<LogoutSharp />}
-                        sx={{ backgroundColor: colors.primary, color: colors.secondary }}
+                        sx={{ backgroundColor: colors.background, color: colors.primary }}
                     >
                         Se déconnecter
                     </Button>

@@ -1,5 +1,5 @@
-import { Button, ButtonGroup, CircularProgress, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { AddSharp, DeleteSharp, EditSharp } from "@mui/icons-material";
+import { Button, ButtonGroup, CircularProgress, Fab, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Add, AddSharp, DeleteSharp, EditSharp } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import AddPosDialog from "./addPosDialog";
 import { SnackbarProvider } from "notistack";
@@ -7,6 +7,7 @@ import axiosInstance from "../../../axiosInstance";
 import { PointOfSale } from "../../../Hooks/types";
 import EditPosDialog from "./editPosDialog";
 import DeletePosDialog from "./deletePosDialog";
+import { colors } from "../../../Colors";
 
 const PointOfSaleList = () => {
 
@@ -76,8 +77,9 @@ const PointOfSaleList = () => {
                                     vertical: 'top',
                                     horizontal: 'right'
                                 }}>
-                <Button variant="outlined" size="small" startIcon={<AddSharp />} onClick={handelOpenAddPosDialog}>Point de vente</Button>
-
+                <Fab onClick={handelOpenAddPosDialog} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                    <Add />
+                </Fab>
                 <AddPosDialog open={openAddPosDialog}
                                 handleClose={handleCloseAddPosDialog} 
                                 pointOfSaleList={pointOfSaleList}/>
@@ -93,13 +95,13 @@ const PointOfSaleList = () => {
                                  pointOfSaleList={pointOfSaleList}
                                  setPointOfSaleList={setPointOfSaleList} />
 
-                <TableContainer component={Paper}>
+                <TableContainer sx={{background: colors.background}} component={Paper}>
                     <Table>
                         <TableHead>
-                            <TableRow>
-                                <TableCell align="center">Nom du point de vente</TableCell>
-                                <TableCell align="center">Adresse</TableCell>
-                                <TableCell align="center">Options</TableCell>
+                            <TableRow sx={{background: colors.secondary}}>
+                                <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Nom du point de vente</Typography></TableCell>
+                                <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Adresse</Typography></TableCell>
+                                <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Options</Typography></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -110,8 +112,8 @@ const PointOfSaleList = () => {
                                         <TableCell align="center">{pos.address}</TableCell>
                                         <TableCell align="center">
                                             <ButtonGroup variant="text">
-                                                <IconButton onClick={() => handleOpenEditPosDialog(pos)}><EditSharp/></IconButton>
-                                                <IconButton onClick={() => handleOpenDeletePosDialog(pos)}><DeleteSharp/></IconButton>
+                                                <IconButton sx={{color: colors.primary}} onClick={() => handleOpenEditPosDialog(pos)}><EditSharp/></IconButton>
+                                                <IconButton sx={{color: colors.primary}} onClick={() => handleOpenDeletePosDialog(pos)}><DeleteSharp/></IconButton>
                                             </ButtonGroup>
                                         </TableCell>
                                     </TableRow>
@@ -126,3 +128,7 @@ const PointOfSaleList = () => {
 }
 
 export default PointOfSaleList;
+
+
+
+

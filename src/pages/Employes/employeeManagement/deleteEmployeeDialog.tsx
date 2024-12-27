@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { Employee } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors";
 
 interface DeleteEmployeeProps {
     open: boolean;
@@ -40,16 +41,21 @@ const DeleteEmployeeDilog: React.FC<DeleteEmployeeProps> = ({open, handleClose, 
 
     return (
         <Dialog open={open}
-                onClose={handleClose}>
-                <DialogTitle><Typography>Supprimer l'employé {selectedEmployee?.nameEmployee} ?</Typography></DialogTitle>
+                onClose={handleClose}
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }}>
+                <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Supprimer l'employé {selectedEmployee?.nameEmployee} ?</Typography></DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Voulez-vous vraiment supprimer cet employé ?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" size="small" onClick={handleSubmit}>Valider</Button>
-                    <Button variant="outlined" size="small" onClick={handleClose}>Annuler</Button>
+                    <Button variant="outlined" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Valider</Button>
+                    <Button variant="outlined" size="small" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button>
                 </DialogActions>
         </Dialog>
     )

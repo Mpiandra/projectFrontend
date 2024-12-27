@@ -11,6 +11,7 @@ import { groupData} from "../../../Hooks/useGroupData.ts";
 import { SnackbarProvider } from "notistack";
 import DeleteProductType from "./deleteProductType.tsx";
 import { colors } from "../../../Colors/index.ts";
+import '@fontsource/roboto/300.css';
 
 // Types
 
@@ -149,9 +150,9 @@ const CategoryList: React.FC = () => {
                         <Table>
                             <TableHead>
                                 <TableRow sx={{background: colors.secondary}}>
-                                    <TableCell><Typography variant="h6" sx={{color: colors.neutral}}>Type de produit</Typography></TableCell>
-                                    <TableCell><Typography variant="h6" sx={{color: colors.neutral}}>Attribut</Typography></TableCell>
-                                    <TableCell><Typography variant="h6" sx={{color: colors.neutral}}>Options</Typography></TableCell>
+                                    <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Type de produit</Typography></TableCell>
+                                    <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Attribut</Typography></TableCell>
+                                    <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Options</Typography></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

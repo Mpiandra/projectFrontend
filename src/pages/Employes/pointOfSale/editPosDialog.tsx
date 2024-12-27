@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from "@mui/material";
 import { PointOfSale } from "../../../Hooks/types";
 import InputField from "../../../Components/Common/Input";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../axiosInstance";
 import { useSnackbar } from "notistack";
+import { colors } from "../../../Colors";
 
 interface EditPosDialogProps {
     open: boolean;
@@ -55,8 +56,13 @@ const EditPosDialog : React.FC<EditPosDialogProps> = ({open, handleClose, select
 
     return (
         <Dialog open={open}
-                onClose={handleClose} >
-                    <DialogTitle>Modifier le point de vente {selectedPos?.pointOfSaleName}</DialogTitle>
+                onClose={handleClose}
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }} >
+                    <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Modifier le point de vente {selectedPos?.pointOfSaleName}</Typography></DialogTitle>
                     <DialogContent>
                         <Stack direction={"column"}
                                 spacing={2}
@@ -72,8 +78,8 @@ const EditPosDialog : React.FC<EditPosDialogProps> = ({open, handleClose, select
                                 </Stack>
                     </DialogContent>
                     <DialogActions>
-                        <Button variant="outlined" size="small" onClick={handleSubmit}>Envoyer</Button>
-                        <Button variant="outlined" size="small" onClick={handleClose}>Annuler</Button>
+                        <Button variant="outlined" size="small" onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Envoyer</Button>
+                        <Button variant="outlined" size="small" onClick={handleClose} sx={{borderRadius: "20px"}}>Annuler</Button>
                     </DialogActions>
         </Dialog>
     )

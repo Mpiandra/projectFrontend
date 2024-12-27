@@ -36,9 +36,14 @@ const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, 
         <Dialog open={open}
                 onClose={handleClose}
                 maxWidth={"lg"}
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px"
+                    }
+                }}
         >
             <DialogTitle>
-                <Typography variant="h4">Supprimer la catégorie {categoryName}</Typography>
+                <Typography variant="h4" align="center">Supprimer la catégorie {categoryName}</Typography>
             </DialogTitle>
             <DialogContent>
                 <DialogContentText>
@@ -46,8 +51,8 @@ const DeleteCategoryDialog: React.FC<DeleteCategoryProps> = ({open, idCategory, 
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button variant={"outlined"} onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.neutral, borderRadius: "20px"}}>Valider</Button>
-                <Button variant={"outlined"} size={"small"} onClick={handleClose} sx={{borderRadius: "20px"}} >Annuler</Button>
+                <Button variant={"outlined"} onClick={handleSubmit} sx={{color: colors.textDefault, background: colors.primary, borderRadius: "20px"}}>Valider</Button>
+                <Button variant={"outlined"} onClick={handleClose} sx={{borderRadius: "20px"}} >Annuler</Button>
             </DialogActions>
         </Dialog>
     )

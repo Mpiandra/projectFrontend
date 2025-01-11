@@ -3,7 +3,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { Button, Divider, Fab, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
-import { Add, AddSharp} from '@mui/icons-material';
+import { Add} from '@mui/icons-material';
 import AddTransferDialog from './addTransfer';
 import axiosInstance from '../../../axiosInstance';
 import { formatDate, transformTransferData } from '../../../Hooks/useGroupData';

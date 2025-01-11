@@ -185,14 +185,24 @@ const AddSaleDialog: React.FC<AddSaleProps> = ({open, handleClose, filteredSaleD
             const idPointOfSale = addSaleResponse.data.pointOfSale.idPointOfSale;
             const saleDate = addSaleResponse.data.saleDate;
             const priceTotal = addSaleResponse.data.totalPrice;
+
+            const transformedSaleRows = saleRows.map((row, index) => ({
+                idSaleRow: index + 1, // Génération d'un ID pour chaque ligne
+                idProduct: row.product.idProduct,
+                imageUrl: row.product.imageUrl,
+                price: row.product.price,
+                priceSale: row.priceSale,
+                productName: row.product.productName,
+                quantitySale: row.quantitySale
+            }));
             
 
             const newSaleData = {
                 idSale,
                 idPointOfSale,
                 saleDate,
-                priceTotal,
-                saleRows: saleRows
+                totalPrice : priceTotal,
+                saleRows: transformedSaleRows
             }
 
             console.log("filteredSaleData : ", filteredSaleData);
@@ -200,7 +210,7 @@ const AddSaleDialog: React.FC<AddSaleProps> = ({open, handleClose, filteredSaleD
             
             
 
-            filteredSaleData.push(newSaleData);
+            filteredSaleData?.push(newSaleData);
 
             enqueueSnackbar("Vente enregistrée avec succès", {variant: "success"})
             resetForm();

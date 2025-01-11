@@ -21,10 +21,9 @@ export default function Appbar (){
             <AppBar
                     sx={{
                         background: colors.background,
-                        justifyContent: "center",
                     }}
             >
-                <Toolbar sx={{ justifyContent: "end" }}>
+                <Toolbar sx={{  justifyContent: "end",marginLeft: "208px" }}>
                     
                     <FormControl sx={{m: 1}}>
                         <TextField

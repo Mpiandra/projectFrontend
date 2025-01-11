@@ -3,13 +3,14 @@ import {  Fab,  Paper,  Stack, Table, TableBody, TableCell, TableHead, TableRow,
 import { Add} from "@mui/icons-material";
 import AddSaleDialog from "./addSale";
 import axiosInstance from "../../../axiosInstance";
-import { SaleGetted } from "../../../Hooks/types";
+import { Employee, SaleGetted } from "../../../Hooks/types";
 import { transformToSaleGetted } from "../../../Hooks/useGroupData";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { colors } from "../../../Colors";
+import Grid from '@mui/material/Grid2';
 
 const SaleList: React.FC = () => {
 
@@ -18,8 +19,18 @@ const SaleList: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState<string>();
     const [minDate, setMinDate] = useState<number>();
     const [filteredSaleData, setFilteredSaleData] = useState<SaleGetted[]>();
+    const [totalSale, setTotalSale] = useState<number>();
+    const [currentEmployee, setCurrentEmployee] = useState<Employee>();
 
     const today = dayjs().format("YYYY-MM-DD");
+
+    const storedEmployee = localStorage.getItem("employee");
+
+    React.useEffect(() => {
+        if(storedEmployee){
+          setCurrentEmployee(JSON.parse(storedEmployee));
+        }
+      }, [storedEmployee])
 
 
 
@@ -37,11 +48,21 @@ const SaleList: React.FC = () => {
         return date.getTime();
       };
 
+      useEffect(() => {
+        setTotalSale(filteredSaleData?.reduce((sum, sale) => sum + sale.totalPrice, 0));
+        
+      }, [filteredSaleData])
+
+      useEffect(() => {
+        console.log("Total sum updated:", totalSale);
+    }, [totalSale]);
+    
       
 
     useEffect(() => {
+
         const fetchData = async() => {
-            const getSaleData = await axiosInstance.get("/allSaleData")
+            const getSaleData = await axiosInstance.get(`/allSaleData/${currentEmployee?.pointOfSale?.idPointOfSale}`)
             console.log("getSaleData : ", getSaleData);
             setSaleData(transformToSaleGetted(getSaleData.data))
             setSelectedDate(today)
@@ -49,7 +70,7 @@ const SaleList: React.FC = () => {
 
         fetchData();
         
-    }, [])
+    }, [currentEmployee])
 
     useEffect(() => {
         setMinDate(saleData.reduce(
@@ -88,15 +109,31 @@ const SaleList: React.FC = () => {
         <Fab onClick={handleOpenAddSale} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
                     <Add />
                 </Fab>
-        <Stack direction={"row"} spacing={2}>
-            <Typography variant="h5" sx={{color: colors.neutral}}>Voir les ventes du : </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker disableFuture={true}
-                            onChange={(value) => handleDatechange(value)}
-                            minDate={dayjs(minDate)}/>
-            </LocalizationProvider>
-        </Stack>
+        <Grid container 
+                sx={{
+                        position: "sticky",
+                        top: 70,
+                        alignSelf: "flex-start",
+                        backgroundColor: "white",
+                        zIndex: 10, 
+                        padding: "10px", 
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"}}>
+            <Grid size={8} >
+                <Stack direction={"row"} spacing={2}>
+                    <Typography variant="h5" sx={{color: colors.neutral}}>Voir les ventes du : </Typography>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker disableFuture={true}
+                                    onChange={(value) => handleDatechange(value)}
+                                    minDate={dayjs(minDate)}/>
+                    </LocalizationProvider>
+                </Stack>
 
+            </Grid>
+            <Grid size={4}>
+                <Typography variant="h5" sx={{color: colors.neutral}}>Vente du jour : {totalSale}</Typography>
+            </Grid>
+
+        </Grid>
         
         <Stack direction={"column"} spacing={2} margin={2}>
             {filteredSaleData?.map((sale, index) => {

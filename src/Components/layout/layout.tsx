@@ -22,7 +22,7 @@ export default function AppLayout({children}:{children:ReactNode}){
             </>
             )
                 :
-                (<Box marginTop={10}>
+                (<Box>
                     {
 
                     children

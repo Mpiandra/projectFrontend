@@ -141,7 +141,7 @@ const SaleList: React.FC = () => {
                     <Paper elevation={5} key={index} sx={{background: colors.background}}>
                     <Table key={sale.idSale}>
                     <TableHead>
-                        <TableRow sx={{background: colors.secondary}}>
+                        <TableRow sx={{background: colors.primary}}>
                             <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Produit</Typography></TableCell>
                             <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Prix unitaire</Typography></TableCell>
                             <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Quantité vendue</Typography></TableCell>

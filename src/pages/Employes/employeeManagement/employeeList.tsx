@@ -125,16 +125,16 @@ const EmployeeList: React.FC = () => {
 
             <div>
             <Stack direction={"column"} spacing={3}>
-                {employeeList.map((employee) => (
+                {employeeList.map((employee, index) => (
 
                    
-                        <Paper elevation={3}>
-                            <Accordion>
+                        <Paper elevation={3} key={index}>
+                            <Accordion key={employee.idEmployee}>
                                 <AccordionSummary
                                     expandIcon={<ArrowDropDownIcon/>}
                                     aria-controls="panel2-content"
                                     id="panel2-header"
-                                    sx={{backgroundColor: colors.secondary}}
+                                    sx={{backgroundColor: colors.primary}}
                                 >
                                     <Stack direction={"row"}
                                         justifyContent={"space-between"}
@@ -158,8 +158,8 @@ const EmployeeList: React.FC = () => {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Stack direction={"column"} spacing={1}>
-                                        <Typography>Point de vente : {employee.pointOfSale ? employee.pointOfSale.pointOfSaleName : 'Aucun'}</Typography>
-                                        <Typography>Permissions : </Typography>
+                                        <Typography><b>Point de vente :</b> {employee.pointOfSale ? employee.pointOfSale.pointOfSaleName : 'Aucun'}</Typography>
+                                        <Typography><b>Permissions :</b> </Typography>
                                         
                                         {formatPermissions(employee.permissions).map((permission, index) => (
                                         <Typography key={index}> - {permission}</Typography>

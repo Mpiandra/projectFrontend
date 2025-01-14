@@ -98,7 +98,7 @@ const PointOfSaleList = () => {
                 <TableContainer sx={{background: colors.background}} component={Paper}>
                     <Table>
                         <TableHead>
-                            <TableRow sx={{background: colors.secondary}}>
+                            <TableRow sx={{background: colors.primary}}>
                                 <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Nom du point de vente</Typography></TableCell>
                                 <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Adresse</Typography></TableCell>
                                 <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Options</Typography></TableCell>

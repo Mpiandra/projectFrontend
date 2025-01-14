@@ -92,7 +92,7 @@ export default function AppDrawer({ children }: { children: ReactNode }) {
                                 <ListItemButton
                                     onClick={() => navigate(item.link)}
                                     sx={{
-                                        backgroundColor: isActive ? colors.textDefault : 'inherit', 
+                                        backgroundColor: isActive ? colors.background : 'inherit', 
                                         color: isActive ? colors.primary : colors.textDefault, 
                                         '&:hover': {
                                             backgroundColor: colors.neutral, 

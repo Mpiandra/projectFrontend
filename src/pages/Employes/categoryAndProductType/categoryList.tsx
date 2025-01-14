@@ -149,7 +149,7 @@ const CategoryList: React.FC = () => {
                         <TableContainer component={Paper} sx={{background: colors.background}}>
                         <Table>
                             <TableHead>
-                                <TableRow sx={{background: colors.secondary}}>
+                                <TableRow sx={{background: colors.primary}}>
                                     <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Type de produit</Typography></TableCell>
                                     <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Attribut</Typography></TableCell>
                                     <TableCell><Typography variant="h6" sx={{color: colors.textDefault}}>Options</Typography></TableCell>

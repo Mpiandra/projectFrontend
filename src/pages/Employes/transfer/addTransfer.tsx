@@ -24,6 +24,7 @@ const AddTransferDialog: React.FC<AddTransferProps> = ({ open, handleClose, allT
     const [selectedPointOfSaleId, setSelectedPointOfSaleId] = useState<number | "">("");
     const [selectedPos, setSelectedPos] = useState<PointOfSale>();
     const [pointOfSaleList, setPointOfSaleList] = useState<PointOfSale[]>([]);
+    const [filteredPointOfSale, setFilteredPointOfSale] = useState<PointOfSale[]>([]);
 
 
     const storedEmployee = localStorage.getItem("employee");
@@ -52,6 +53,20 @@ const AddTransferDialog: React.FC<AddTransferProps> = ({ open, handleClose, allT
             setCurrentEmployee(JSON.parse(storedEmployee));
         }
     }, [storedEmployee]);
+
+    useEffect(() => {
+        if(currentEmployee?.pointOfSale){
+            setFilteredPointOfSale(
+                pointOfSaleList.filter((pos) => {
+                    if(pos.idPointOfSale !== currentEmployee.pointOfSale?.idPointOfSale){
+                        return true;
+                    }
+                })
+            )
+            
+        }
+    }, [currentEmployee, pointOfSaleList])
+
 
     const selectHandleChange = (event: SelectChangeEvent<number>) => {
         const value = event.target.value as number;
@@ -232,7 +247,7 @@ const AddTransferDialog: React.FC<AddTransferProps> = ({ open, handleClose, allT
         <Dialog open={open} 
                 onClose={handleClose} 
                 fullScreen>
-            <DialogTitle><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Ajouter un transfert</Typography></DialogTitle>
+            <DialogTitle><div><Typography align="center" variant="h4" sx={{color: colors.neutral}}>Ajouter un transfert</Typography></div></DialogTitle>
             <DialogContent>
                     
                             <Grid size={6} justifyContent={"center"} sx={{margin: 1}}>
@@ -245,11 +260,16 @@ const AddTransferDialog: React.FC<AddTransferProps> = ({ open, handleClose, allT
                                         value={selectedPointOfSaleId}
                                         onChange={selectHandleChange}
                                     >
-                                    {pointOfSaleList?.map((pos) => (
+                                    {filteredPointOfSale.length <= 0 ? pointOfSaleList?.map((pos) => (
                                         <MenuItem value={pos.idPointOfSale} key={pos.idPointOfSale}>
                                             {pos.pointOfSaleName}
                                         </MenuItem>
-                                    ))}
+                                    )) : 
+                                    filteredPointOfSale?.map((pos) => (
+                                        <MenuItem value={pos.idPointOfSale} key={pos.idPointOfSale}>
+                                            {pos.pointOfSaleName}
+                                        </MenuItem>
+                                    ))  }
                                 </Select>
                                 </FormControl >
                             </Grid>

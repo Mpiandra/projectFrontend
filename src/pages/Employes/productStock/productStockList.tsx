@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Divider, Fab, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Divider, Fab, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { Add, AddSharp } from "@mui/icons-material";
 import { useState } from "react";
 import AddToStockDialog from "./addToStockDialog";
@@ -7,6 +7,7 @@ import { CategoryWithStock, Employee } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import { groupStockProducts } from "../../../Hooks/useGroupData";
 import { colors } from "../../../Colors";
+import { ArrowDropDownIcon } from "@mui/x-date-pickers";
 
 const ProductStockList = () => {
 
@@ -68,31 +69,40 @@ const ProductStockList = () => {
                     <React.Fragment key={category.idCategory}>
                         
                         <Paper elevation={5} sx={{background: colors.background}}>
-                        <Typography variant={"h4"} align="center" sx={{color: colors.secondary}}>{category.categoryName}</Typography>
+                        <Typography variant={"h4"} align="center" sx={{color: colors.background, backgroundColor: colors.primary}}>{category.categoryName}</Typography>
                             {category.productTypes.map((productType) => {
                                 return (
                                     <React.Fragment key={productType.idProductType}>
-                                        <Typography variant="h5" color={colors.neutral}>{productType.productTypeName}</Typography>
-                                        <Table>
-                                            <TableHead>
-                                                <TableRow sx={{background: colors.secondary}}>
-                                                    <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Produit</Typography></TableCell>
-                                                    <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Quantité en stock</Typography></TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {productType.products.map((product) => {
-                                                    return (
-                                                        <TableRow key={product.idProduct}>
-                                                            <TableCell align="center">{product.productName}</TableCell>
-                                                            <TableCell align="center">{product.quantityStock}</TableCell>
+                                        <Accordion>
+                                            <AccordionSummary
+                                                expandIcon={<ArrowDropDownIcon/>}
+                                                aria-controls="panel2-content"
+                                                id="panel2-header"
+                                                sx={{backgroundColor: colors.background}}
+                                            >
+                                                <Typography variant="h5" color={colors.neutral}>{productType.productTypeName}</Typography>
+                                            </AccordionSummary>
+                                            <AccordionDetails>
+                                                <Table>
+                                                    <TableHead>
+                                                        <TableRow sx={{background: colors.primary}}>
+                                                            <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Produit</Typography></TableCell>
+                                                            <TableCell align="center"><Typography variant="h6" sx={{color: colors.textDefault}}>Quantité en stock</Typography></TableCell>
                                                         </TableRow>
-                                                    )
-                                                })}
-                                            </TableBody>
-                                        </Table>
-                                        <Divider />
-                                        
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {productType.products.map((product) => {
+                                                            return (
+                                                                <TableRow key={product.idProduct}>
+                                                                    <TableCell align="center">{product.productName}</TableCell>
+                                                                    <TableCell align="center">{product.quantityStock}</TableCell>
+                                                                </TableRow>
+                                                            )
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            </AccordionDetails>
+                                        </Accordion>
                                     </React.Fragment>
                                 )
                             })}

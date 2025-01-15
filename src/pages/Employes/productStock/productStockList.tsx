@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Divider, Fab, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import { Add, AddSharp } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary, Fab, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import AddToStockDialog from "./addToStockDialog";
 import { CategoryWithStock, Employee } from "../../../Hooks/types";

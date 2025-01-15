@@ -1,13 +1,14 @@
-import { Button, ButtonGroup, CircularProgress, Fab, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import { Add, AddSharp, DeleteSharp, EditSharp } from "@mui/icons-material";
+import { ButtonGroup, CircularProgress, Fab, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Add, DeleteSharp, EditSharp } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import AddPosDialog from "./addPosDialog";
 import { SnackbarProvider } from "notistack";
 import axiosInstance from "../../../axiosInstance";
-import { PointOfSale } from "../../../Hooks/types";
+import { Employee, PointOfSale } from "../../../Hooks/types";
 import EditPosDialog from "./editPosDialog";
 import DeletePosDialog from "./deletePosDialog";
 import { colors } from "../../../Colors";
+import { transformToEmployee } from "../../../Hooks/useGroupData";
 
 const PointOfSaleList = () => {
 
@@ -21,6 +22,19 @@ const PointOfSaleList = () => {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const [currentEmployee, setCurrentEmployee] = useState<Employee>();
+
+    const storedEmployee = localStorage.getItem("employee");
+
+    useEffect(() => {
+        if(storedEmployee){
+            console.log("st : ", storedEmployee);
+            const parsedEmployee = JSON.parse(storedEmployee)
+            console.log("parsedEmployee", parsedEmployee);
+            setCurrentEmployee(transformToEmployee(parsedEmployee))
+        }
+    }, [storedEmployee])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -72,14 +86,18 @@ const PointOfSaleList = () => {
 
     return (
         <>
+        {console.log("currentEmployee : ", currentEmployee)
+        }
             <SnackbarProvider maxSnack={3}
                                 anchorOrigin={{
                                     vertical: 'top',
                                     horizontal: 'right'
                                 }}>
-                <Fab onClick={handelOpenAddPosDialog} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                {currentEmployee?.permissions.canAddPointOfSale && 
+                    <Fab onClick={handelOpenAddPosDialog} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
                     <Add />
                 </Fab>
+                }
                 <AddPosDialog open={openAddPosDialog}
                                 handleClose={handleCloseAddPosDialog} 
                                 pointOfSaleList={pointOfSaleList}/>
@@ -112,8 +130,13 @@ const PointOfSaleList = () => {
                                         <TableCell align="center">{pos.address}</TableCell>
                                         <TableCell align="center">
                                             <ButtonGroup variant="text">
-                                                <IconButton sx={{color: colors.primary}} onClick={() => handleOpenEditPosDialog(pos)}><EditSharp/></IconButton>
-                                                <IconButton sx={{color: colors.primary}} onClick={() => handleOpenDeletePosDialog(pos)}><DeleteSharp/></IconButton>
+                                                {currentEmployee?.permissions.canEditPointOfSale && 
+                                                    <IconButton sx={{color: colors.primary}} onClick={() => handleOpenEditPosDialog(pos)}><EditSharp/></IconButton>
+                                                }
+                                                {
+                                                    currentEmployee?.permissions.canDeletePointOfSale &&
+                                                    <IconButton sx={{color: colors.primary}} onClick={() => handleOpenDeletePosDialog(pos)}><DeleteSharp/></IconButton>
+                                                }
                                             </ButtonGroup>
                                         </TableCell>
                                     </TableRow>

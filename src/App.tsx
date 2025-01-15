@@ -13,6 +13,7 @@ import {createTheme, ThemeProvider} from "@mui/material";
 import TransferList from "./pages/Employes/transfer/transferList.tsx";
 import SaleList from "./pages/Employes/sale/saleList.tsx";
 import ProductStockList from "./pages/Employes/productStock/productStockList.tsx";
+import Account from "./pages/Employes/account/seeAccount.tsx";
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
                               <Route path="/transfer" element={<TransferList />} />
                               <Route path="/sale" element={<SaleList />} />
                               <Route path="/productStock" element={<ProductStockList />} />
+                              <Route path="/account" element={<Account />} />
                           </Routes>
                     </AppLayout>
                 </SnackbarProvider>

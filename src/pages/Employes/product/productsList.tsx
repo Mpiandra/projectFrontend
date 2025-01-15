@@ -18,9 +18,9 @@ import {
 import { Add, DeleteSharp, EditSharp } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import AddProductDialog from "./addProductDialog.tsx";
-import { AllProductData, CategoryJoinProductType, ProductJoinProductAttribute } from "../../../Hooks/types.ts";
+import { AllProductData, CategoryJoinProductType, Employee, ProductJoinProductAttribute } from "../../../Hooks/types.ts";
 import axiosInstance from "../../../axiosInstance.ts";
-import { groupData, transformToAllProductData } from "../../../Hooks/useGroupData.ts";
+import { groupData, transformToAllProductData, transformToEmployee } from "../../../Hooks/useGroupData.ts";
 import EditProductDialog from "./editProduct.tsx";
 import DeleteProductDialog from "./deleteProductDialog.tsx";
 import { SnackbarProvider } from "notistack";
@@ -46,6 +46,19 @@ const ProductsList: React.FC = () => {
     const [searchParams] = useSearchParams();
 
     const search = searchParams.get("search");
+
+    const [currentEmployee, setCurrentEmployee] = useState<Employee>();
+
+    const storedEmployee = localStorage.getItem("employee");
+
+    useEffect(() => {
+        if(storedEmployee){
+            console.log("st : ", storedEmployee);
+            const parsedEmployee = JSON.parse(storedEmployee)
+            console.log("parsedEmployee", parsedEmployee);
+            setCurrentEmployee(transformToEmployee(parsedEmployee))
+        }
+    }, [storedEmployee])
 
     useEffect(() => {
         const filteredProducts = productDataList.filter((category) => {
@@ -143,9 +156,11 @@ const ProductsList: React.FC = () => {
                 setProductDataList={setProductDataList} />
 
             <Grid container spacing={1}>
-                <Fab onClick={handleOpenAddProduct} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                {currentEmployee?.permissions.canAddProduct && 
+                    <Fab onClick={handleOpenAddProduct} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
                     <Add />
                 </Fab>
+                }
                 <Grid size={12}>
                     <Stack spacing={3}>
                         {productDataList.map((data, index) => {
@@ -259,13 +274,18 @@ const ProductsList: React.FC = () => {
                                                                         }}>
                                                                             {product.price} Ar
                                                                             <div>
-                                                                                <IconButton
+                                                                                {currentEmployee?.permissions.canEditProduct && 
+                                                                                    <IconButton
                                                                                     onClick={() => handleOpenEditProduct(product)}><EditSharp />
                                                                                 </IconButton>
-                                                                                <IconButton
+                                                                                }
+                                                                                {
+                                                                                    currentEmployee?.permissions.canDeleteProduct && 
+                                                                                    <IconButton
                                                                                     color="error"
                                                                                     onClick={() => handleOpenDeleteProduct(product)}><DeleteSharp />
                                                                                 </IconButton>
+                                                                                }
                                                                             </div>
                                                                         </CardActions>
                                                                     </Card>

@@ -6,8 +6,8 @@ import EditCategoryDialog from "./editCategory.tsx";
 import DeleteCategoryDialog from "./deleteCategory.tsx";
 import AddCategoryDialog from "./addCategoryDialog.tsx";
 import AddProductTypeandAttributes from "./addProductTypeandAttributes.tsx";
-import { CategoryJoinProductType, ProductTypeJoinProductTypeAttribute } from "../../../Hooks/types.ts";
-import { groupData} from "../../../Hooks/useGroupData.ts";
+import { CategoryJoinProductType, Employee, ProductTypeJoinProductTypeAttribute } from "../../../Hooks/types.ts";
+import { groupData, transformToEmployee} from "../../../Hooks/useGroupData.ts";
 import { SnackbarProvider } from "notistack";
 import DeleteProductType from "./deleteProductType.tsx";
 import { colors } from "../../../Colors/index.ts";
@@ -25,6 +25,18 @@ const CategoryList: React.FC = () => {
 
     const [selectedCategory, setSelectedCategory] = useState<CategoryJoinProductType | null>(null)
     const [selectedProductType, setSelectedProductType] = useState<ProductTypeJoinProductTypeAttribute | null>(null)
+    const [currentEmployee, setCurrentEmployee] = useState<Employee>();
+
+    const storedEmployee = localStorage.getItem("employee");
+
+    useEffect(() => {
+        if(storedEmployee){
+            console.log("st : ", storedEmployee);
+            const parsedEmployee = JSON.parse(storedEmployee)
+            console.log("parsedEmployee", parsedEmployee);
+            setCurrentEmployee(transformToEmployee(parsedEmployee))
+        }
+    }, [storedEmployee])
 
     const handleCloseCategoryEdit= () => {
         setOpenEditCategoryDialog(false);
@@ -94,10 +106,12 @@ const CategoryList: React.FC = () => {
     }, []);
 
     return (
-        <SnackbarProvider>  
-            <Fab onClick={handleOpenAddCategory} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
-                    <Add />
-                </Fab>
+        <SnackbarProvider>
+            {currentEmployee?.permissions.canAddCategory &&
+                <Fab onClick={handleOpenAddCategory} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                <Add />
+            </Fab> 
+            }
             <EditCategoryDialog open={openEditCategoryDialog}
                                 handleClose={handleCloseCategoryEdit}
                                 idCategory={selectedCategory?.idCategory}
@@ -140,9 +154,17 @@ const CategoryList: React.FC = () => {
                         >
                             <Typography variant="h4" align="center" sx={{color: colors.primary}}>{category.categoryName}</Typography>
                             <ButtonGroup variant={"text"}>
-                                <IconButton onClick={() => handleOpenCategoryEdit(category)}>{<EditSharp />}</IconButton>
-                                <IconButton onClick={() => handleOpenCategoryDelete(category)}>{<DeleteSharp />}</IconButton>
-                                <IconButton onClick={() => handleOpenAddProductType(category)}><AddSharp /></IconButton>
+                               {currentEmployee?.permissions?.canEditCategory && 
+                                     <IconButton onClick={() => handleOpenCategoryEdit(category)}>{<EditSharp />}</IconButton>
+                               }
+                                {
+                                    currentEmployee?.permissions?.canDeleteCategory &&
+                                    <IconButton onClick={() => handleOpenCategoryDelete(category)}>{<DeleteSharp />}</IconButton>
+                                }
+                                {
+                                    currentEmployee?.permissions?.canAddProductType &&
+                                    <IconButton onClick={() => handleOpenAddProductType(category)}><AddSharp /></IconButton>
+                                }
                             </ButtonGroup>
                         </Stack>
                         {category.productTypes.length > 0 ? 
@@ -168,7 +190,9 @@ const CategoryList: React.FC = () => {
                                                 <TableCell>{attribute.attributeName}</TableCell>
                                                 {attributeIndex===0 && (
                                                     <TableCell rowSpan={productType.attributes.length} sx={{justifyContent:"center"}}>
-                                                        <IconButton onClick={() => handleOpenDeleteProductType(productType)}><DeleteSharp /></IconButton>
+                                                        {currentEmployee?.permissions?.canDeleteProductType &&
+                                                            <IconButton onClick={() => handleOpenDeleteProductType(productType)}><DeleteSharp /></IconButton> 
+                                                        }
                                                     </TableCell>
                                                 )}
                                             </TableRow>

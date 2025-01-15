@@ -11,13 +11,28 @@ import {
     Toolbar
 } from "@mui/material";
 import {LogoutSharp} from "@mui/icons-material";
-import React, {ReactNode} from "react";
+import React, {ReactNode, useEffect, useState} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BadgeEuro, ChartBarStacked, Layers, Move3D, ShoppingBasket, Store, Users } from "lucide-react";
+import { BadgeEuro, ChartBarStacked, Layers, Move3D, ShoppingBasket, Store, User, Users } from "lucide-react";
 import { colors } from "../../Colors";
+import { transformToEmployee } from "../../Hooks/useGroupData";
+import { Employee } from "../../Hooks/types";
 
 export default function AppDrawer({ children }: { children: ReactNode }) {
     const drawerWidth = 240;
+
+    const [currentEmployee, setCurrentEmployee] = useState<Employee>();
+
+    const storedEmployee = localStorage.getItem("employee");
+
+    useEffect(() => {
+        if(storedEmployee){
+            console.log("st : ", storedEmployee);
+            const parsedEmployee = JSON.parse(storedEmployee)
+            console.log("parsedEmployee", parsedEmployee);
+            setCurrentEmployee(transformToEmployee(parsedEmployee))
+        }
+    }, [storedEmployee])
 
     const navigate = useNavigate();
     const location = useLocation(); // Utilisé pour obtenir l'URL actuelle
@@ -31,38 +46,51 @@ export default function AppDrawer({ children }: { children: ReactNode }) {
         {
             link: "/categories",
             label: "Categories",
-            icon: <ChartBarStacked />
+            icon: <ChartBarStacked />,
+            shouldShow: true
         },
         {
             link: "/produits",
             label: "Produits",
-            icon: <ShoppingBasket />
+            icon: <ShoppingBasket />,
+            shouldShow: true
         },
         {
             link: "/sale",
             label: "Ventes",
-            icon: <BadgeEuro />
+            icon: <BadgeEuro />,
+            shouldShow: currentEmployee?.pointOfSale !== null
         },
         {
             link: "/productStock",
             label: "Stock de produit",
-            icon: <Layers />
+            icon: <Layers />,
+            shouldShow: true
         },
         {
             link: "/pointOfSale",
             label: "Points de vente",
-            icon: <Store />
+            icon: <Store />,
+            shouldShow: true
         },
         {
             link: "/employee",
             label: "Employés",
-            icon: <Users />
+            icon: <Users />,
+            shouldShow: true
         },
         {
             link: "/transfer",
             label: "Transferts",
-            icon: <Move3D />
+            icon: <Move3D />,
+            shouldShow: true
         },
+        {
+            link: "/account",
+            label: "Profil",
+            icon: <User />,
+            shouldShow: true
+        }
     ];
 
     return (
@@ -86,6 +114,9 @@ export default function AppDrawer({ children }: { children: ReactNode }) {
                 <Divider />
                 <List sx={{ flexGrow: 1, overflowY: 'auto' }}>
                     {arrayLink.map((item) => {
+                        if(!item.shouldShow){
+                            return null
+                        }
                         const isActive = location.pathname === item.link; 
                         return (
                             <ListItem key={item.link} disablePadding>

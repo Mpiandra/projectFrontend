@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Typography, Box, List, ListItem, Divider } from "@mui/material";
-import MenuEmployee from "../../../Components/Employes/menuEmployee";
+import { Button, Typography, Box, List, ListItem, Divider, Paper, Stack } from "@mui/material";
 import ChangePasswordDialog from "./changePassword";
 import { Employee } from "../../../Hooks/types";
 import { transformToEmployee } from "../../../Hooks/useGroupData";
+import Grid from '@mui/material/Grid2';
+import { colors } from "../../../Colors";
 
 const translatedPermissions: { [key: string]: string } = {
     canAddCategory: "Peut ajouter catégorie",
@@ -83,28 +84,43 @@ const Account: React.FC = () => {
 
     return (
         <Box padding={3}>
-            <MenuEmployee />
 
             <ChangePasswordDialog 
                 open={openChangePassword} 
                 handleClose={handleCloseChangePassword} 
             />
 
-            <Typography variant="h5" gutterBottom>Mon Compte</Typography>
+            <Stack direction={"row"} justifyContent={"space-between"}>
+                <Typography variant="h4" gutterBottom>Mon Compte</Typography>
+                <Button variant="outlined" size="small" onClick={handleOpenChangePassword}>
+                    Changer mot de passe
+                </Button>
+            </Stack>
             {currentEmployee ? (
                 <>
-                    <Typography>Nom : {currentEmployee.nameEmployee}</Typography>
-                    <Typography>
-                        Point de vente : {currentEmployee.pointOfSale?.pointOfSaleName || "Non spécifié"}
-                    </Typography>
-                    <Typography>Permissions :</Typography>
-                    <List>
-                        {formatPermissions(currentEmployee.permissions).map((permission, index) => (
-                            <ListItem key={index}>
-                                <Typography>{permission}</Typography>
-                            </ListItem>
-                        ))}
-                    </List>
+                    <Grid container direction={"row"} spacing={1}>
+                        <Grid size={6} alignItems={"center"}>
+                            <Paper elevation={5} sx={{padding: "5px", backgroundColor: colors.primary, marginTop: "150px"}}>
+                                <Typography variant="h5" sx={{color: colors.background}}>Nom : {currentEmployee.nameEmployee}</Typography>
+                                <Typography variant="h5" sx={{color: colors.background}}>
+                                    Point de vente : {currentEmployee.pointOfSale?.pointOfSaleName || "Non spécifié"}
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                        <Grid>
+                            <Typography variant="h5">Permissions :</Typography>
+                            <List>
+                                {formatPermissions(currentEmployee.permissions).map((permission, index) => (
+                                    <ListItem key={index}>
+                                        <Typography>{permission}</Typography>
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </Grid>
+                        
+                    </Grid>
+                    
+                    
                 </>
             ) : (
                 <Typography variant="body1" color="textSecondary">
@@ -114,9 +130,7 @@ const Account: React.FC = () => {
 
             <Divider style={{ margin: "20px 0" }} />
 
-            <Button variant="outlined" size="small" onClick={handleOpenChangePassword}>
-                Changer mot de passe
-            </Button>
+            
         </Box>
     );
 };

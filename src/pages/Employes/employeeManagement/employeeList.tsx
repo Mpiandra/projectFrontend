@@ -6,7 +6,7 @@ import { SnackbarProvider } from "notistack";
 import { Employee } from "../../../Hooks/types";
 import axiosInstance from "../../../axiosInstance";
 import EditEmployeeDialog from "./editEmployeeDialog";
-import { transformToEmployeeList } from "../../../Hooks/useGroupData";
+import { transformToEmployee, transformToEmployeeList } from "../../../Hooks/useGroupData";
 import DeleteEmployeeDilog from "./deleteEmployeeDialog";
 import { colors } from "../../../Colors";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers";
@@ -56,6 +56,19 @@ const EmployeeList: React.FC = () => {
 
     const [employeeList, setEmployeeList] = useState<Employee[]>([]);
 
+    const [currentEmployee, setCurrentEmployee] = useState<Employee>();
+
+    const storedEmployee = localStorage.getItem("employee");
+
+    useEffect(() => {
+        if(storedEmployee){
+            console.log("st : ", storedEmployee);
+            const parsedEmployee = JSON.parse(storedEmployee)
+            console.log("parsedEmployee", parsedEmployee);
+            setCurrentEmployee(transformToEmployee(parsedEmployee))
+        }
+    }, [storedEmployee])
+
     useEffect(() => {
         const fetchDataEmployee = async () => {
             try {
@@ -104,9 +117,11 @@ const EmployeeList: React.FC = () => {
 
     return (
         <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
-            <Fab onClick={handleOpenAddEmployee} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
-                    <Add />
-                </Fab>
+            {currentEmployee?.permissions.canAddEmployee &&
+                <Fab onClick={handleOpenAddEmployee} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+                <Add />
+            </Fab>
+            }
 
             <AddEmployeeDialog open={openAddEmployee} 
                                 handleClose={handleCloseAddEmployee} 
@@ -145,13 +160,17 @@ const EmployeeList: React.FC = () => {
                                             <Typography variant="h6">{employee.mailEmployee}</Typography>
                                         </Stack>
                                         <Stack direction={"row"} spacing={1}>
-                                            <IconButton onClick={(event) => {
-                                                event.stopPropagation(); handleOpenEditEmployee(employee)
-                                            }}><EditSharp sx={{color: colors.background}}/></IconButton>
-                                            <IconButton onClick={(event) => {
-                                                event.stopPropagation();
-                                                handleOpenDeleteEmployee(employee);
-                                            }}><DeleteSharp sx={{color: colors.background}} /></IconButton>
+                                            {currentEmployee?.permissions.canEditEmployee &&
+                                                <IconButton onClick={(event) => {
+                                                    event.stopPropagation(); handleOpenEditEmployee(employee)
+                                                }}><EditSharp sx={{color: colors.background}}/></IconButton>
+                                            }
+                                            {currentEmployee?.permissions.canDeleteEmployee &&
+                                                <IconButton onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    handleOpenDeleteEmployee(employee);
+                                                }}><DeleteSharp sx={{color: colors.background}} /></IconButton>
+                                            }
                                         </Stack>
                                     </Stack>
                                     

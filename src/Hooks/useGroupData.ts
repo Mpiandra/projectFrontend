@@ -313,9 +313,9 @@ export function transformToEmployeeList(data: any[]): Employee[] {
   
       // Retourner un objet Employee en respectant le type Employee
         const newmployee = {
-        idEmployee: data.idEmployee,
-        nameEmployee: data.nameEmployee,
-        mailEmployee: data.mailEmployee,
+        idEmployee: data.id,
+        nameEmployee: data.name,
+        mailEmployee: data.mail,
         password: data.password, // Vous pouvez choisir de ne pas inclure le mot de passe si ce n'est pas nécessaire
         pointOfSale: data.pointOfSale,
         permissions: permissions, // Attacher l'objet permissions

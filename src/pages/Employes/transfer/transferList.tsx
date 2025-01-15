@@ -6,7 +6,7 @@ import { Button, Divider, Fab, Paper, Stack, Table, TableBody, TableCell, TableH
 import { Add} from '@mui/icons-material';
 import AddTransferDialog from './addTransfer';
 import axiosInstance from '../../../axiosInstance';
-import { formatDate, transformTransferData } from '../../../Hooks/useGroupData';
+import { formatDate, transformToEmployee, transformTransferData } from '../../../Hooks/useGroupData';
 import { Employee, TransferGetted } from '../../../Hooks/types';
 import Grid from '@mui/material/Grid2';
 import ConfirmTransferDialog from './confirmTransferDialog';
@@ -72,9 +72,12 @@ const TransferList = () => {
 
   React.useEffect(() => {
     if(storedEmployee){
-      setCurrentEmployee(JSON.parse(storedEmployee));
+        console.log("st : ", storedEmployee);
+        const parsedEmployee = JSON.parse(storedEmployee)
+        console.log("parsedEmployee", parsedEmployee);
+        setCurrentEmployee(transformToEmployee(parsedEmployee))
     }
-  }, [storedEmployee])
+}, [storedEmployee])
 
   React.useEffect(() => {
 
@@ -145,9 +148,11 @@ const TransferList = () => {
                                 inProgressTransferIn={inProgressTransferIn} 
                                 setInProgressTransferIn={setInProgressTransferIn}/>
 
-        <Fab onClick={handleOpenAddTransfer} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
-                    <Add />
-                </Fab>
+        {currentEmployee?.permissions.canAddTransfer && 
+          <Fab onClick={handleOpenAddTransfer} sx={{ display: "flex", position: "fixed", margin: 2, color: colors.neutral,background: colors.tertiary, bottom: 16, right: 16 }}>
+          <Add />
+      </Fab>
+        }
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Transferts en cours" {...a11yProps(0)} />
           <Tab label="Transferts complétés" {...a11yProps(1)} />
